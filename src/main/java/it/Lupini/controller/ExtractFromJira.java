@@ -2,7 +2,10 @@ package it.Lupini.controller;
 
 import it.Lupini.model.*;
 import it.Lupini.utils.JsonUtils;
+import it.Lupini.utils.ReleaseUtils;
+import it.Lupini.utils.TicketUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -49,4 +52,68 @@ public class ExtractFromJira {
         }
         return releaseList;
     }
+
+
+    public List<Ticket> extractAllTickets(List<Release> releasesList) throws IOException, JSONException, URISyntaxException {
+        List<Ticket> ticketsList = getTickets(releasesList);
+        List<Ticket> fixedTicketsList;
+        fixedTicketsList = TicketUtils.fixTicketList(ticketsList, releasesList, project);
+        fixedTicketsList.sort(Comparator.comparing(Ticket::getResolutionDate));
+        return fixedTicketsList;
+    }
+
+
+    //Retrieving all tickets of type BUG with status CLOSED or RESOLVED and resolution equals to FIXED (not Unresolved or others)
+    public List<Ticket> getTickets(List<Release> releasesList) throws IOException, URISyntaxException {
+        int j;
+        int i = 0;
+        int total;
+        List<Ticket> ticketsList = new ArrayList<>();
+        do {
+            j = i + 1000;
+            String url = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22"
+                    + this.project + "%22AND%22issueType%22=%22Bug%22AND" +
+                    "(%22status%22=%22Closed%22OR%22status%22=%22Resolved%22)" +
+                    "AND%22resolution%22=%22Fixed%22&fields=key,versions,created,resolutiondate&startAt="
+                    + i + "&maxResults=" + j;
+            JSONObject json = JsonUtils.readJsonFromUrl(url);
+            JSONArray issues = json.getJSONArray("issues");
+            total = json.getInt("total");
+            for (; i < total && i < j; i++) {
+                //Iterate through each bug to retrieve ID, creation date, resolution date and affected versions
+                String key = issues.getJSONObject(i%1000).get("key").toString();
+                JSONObject fields = issues.getJSONObject(i%1000).getJSONObject("fields");
+                String creationDateString = fields.get("created").toString();
+                String resolutionDateString = fields.get("resolutiondate").toString();
+                LocalDate creationDate = LocalDate.parse(creationDateString.substring(0,10));
+                LocalDate resolutionDate = LocalDate.parse(resolutionDateString.substring(0,10));
+                JSONArray affectedVersionsArray = fields.getJSONArray("versions");
+
+                //to obtain the opening version and the fixed version I use the creation date and the release date
+                Release openingVersion = ReleaseUtils.getReleaseAfterOrEqualDate(creationDate, releasesList);
+                Release fixedVersion =  ReleaseUtils.getReleaseAfterOrEqualDate(resolutionDate, releasesList);
+
+                //obtaining the affected releases
+                List<Release> affectedVersionsList = ReleaseUtils.returnAffectedVersions(affectedVersionsArray, releasesList);
+
+                //checking if the ticket is not valid
+                if(!affectedVersionsList.isEmpty()
+                        && openingVersion!=null
+                        && fixedVersion!=null
+                        && (!affectedVersionsList.get(0).releaseDate().isBefore(openingVersion.releaseDate())
+                        || openingVersion.releaseDate().isAfter(fixedVersion.releaseDate()))){
+                    continue;
+                }
+
+                if(openingVersion != null && fixedVersion != null && openingVersion.id()!=releasesList.get(0).id()){
+                    ticketsList.add(new Ticket(key, creationDate, resolutionDate, openingVersion, fixedVersion, affectedVersionsList));
+                }
+            }
+        } while (i < total);
+        ticketsList.sort(Comparator.comparing(Ticket::getResolutionDate));
+        return ticketsList;
+    }
+
+
+
 }
