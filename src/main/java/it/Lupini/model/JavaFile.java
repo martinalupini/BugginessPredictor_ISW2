@@ -1,5 +1,6 @@
 package it.Lupini.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JavaFile {
@@ -34,7 +35,19 @@ public class JavaFile {
 
 
     public JavaFile(String name) {
+
         this.name = name;
+        this.buggyness = false;
+        this.nr = 0;
+        this.nAuth = new ArrayList<>();
+        this.loc = 0;
+        this.locAdded = 0;
+        this.locTouched = 0;
+        this.avgLocAdded = 0;
+        this.locAddedList = new ArrayList<>();
+        this.churn = 0;
+        this.avgChurn = 0;
+        this.churnList = new ArrayList<>();
     }
 
     // get

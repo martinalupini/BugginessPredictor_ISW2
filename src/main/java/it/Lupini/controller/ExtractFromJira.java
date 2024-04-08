@@ -23,7 +23,7 @@ public class ExtractFromJira {
         this.project = project.toUpperCase();
     }
 
-    public List<Release> extractAllReleases() throws IOException, URISyntaxException {
+    public List<Release> getAllReleases() throws IOException, URISyntaxException {
         List<Release> releaseList = new ArrayList<>();
         int i=0;
         String url = "https://issues.apache.org/jira/rest/api/latest/project/" + this.project;
@@ -54,7 +54,7 @@ public class ExtractFromJira {
     }
 
 
-    public List<Ticket> extractAllTickets(List<Release> releasesList) throws IOException, JSONException, URISyntaxException {
+    public List<Ticket> getAllTickets(List<Release> releasesList) throws IOException, JSONException, URISyntaxException {
         List<Ticket> ticketsList = getTickets(releasesList);
         List<Ticket> fixedTicketsList;
         fixedTicketsList = TicketUtils.fixTicketList(ticketsList, releasesList, project);

@@ -71,4 +71,6 @@ public final class Release {
     public void addCommit(RevCommit commit){
         this.commitList.add(commit);
     }
+
+
 }

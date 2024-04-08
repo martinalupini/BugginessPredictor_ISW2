@@ -1,13 +1,11 @@
 package it.Lupini.utils;
 
 import it.Lupini.model.Release;
+import it.Lupini.model.Ticket;
 import org.json.JSONArray;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ReleaseUtils {
 
@@ -43,4 +41,46 @@ public class ReleaseUtils {
         }
         return null;
     }
+
+
+    public static List<Release> removeHalfReleases(List<Release> releasesList, List<Ticket> ticketList) {
+        List<Release> half = new ArrayList<>();
+
+        float releaseNumber = releasesList.size();
+        int halfRelease = (int) Math.floor(releaseNumber / 2);
+
+        releasesList.sort(Comparator.comparing(Release::releaseDate));
+
+        for(int i =0; i< halfRelease; i++){
+            half.add(releasesList.get(i));
+        }
+
+        //removeAndSetAVTickets(halfRelease, ticketList);
+
+        return half;
+    }
+
+
+    //SECONDO ME NON SERVE
+    /*
+    public static void removeAndSetAVTickets(int halfRelease, List<Ticket> ticketList) {
+
+        Iterator<Ticket> iterator = ticketList.iterator();
+        while (iterator.hasNext()) {
+            Ticket t = iterator.next();
+            if (t.getIV() > halfRelease) {    //se IV > halfRelease --> tolgo ticket
+                iterator.remove();
+            }
+            if (t.getOV() > halfRelease || t.getFV() > halfRelease) {       //Se IV < half, ma OV o FV sono > half? tutte le versioni da IV < half ad half sono AV.
+                List<Integer> affectedVersionsListByTicket = new ArrayList<>();
+                for (int k = t.getIV(); k < halfRelease; k++) {
+                    affectedVersionsListByTicket.add(k);
+                }
+                t.setAV(affectedVersionsListByTicket);
+            }
+        }
+    }
+
+     */
+
 }

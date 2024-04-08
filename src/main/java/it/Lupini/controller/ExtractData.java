@@ -1,6 +1,8 @@
 package it.Lupini.controller;
 
 import it.Lupini.model.Release;
+import it.Lupini.model.Ticket;
+import it.Lupini.utils.ReleaseUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -13,15 +15,22 @@ public class ExtractData {
 
     private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
 
-    public static void extractData(String project, String repoURL) throws IOException, URISyntaxException, GitAPIException {
+    public static void buildDataset(String project, String repoURL) throws IOException, URISyntaxException, GitAPIException {
 
+        //This first part is related to the extraction of information from Git and Jira
         ExtractFromJira jiraExtractor = new ExtractFromJira(project.toUpperCase());
-        List<Release> releaseList = jiraExtractor.extractAllReleases();
-
+        List<Release> releaseList = jiraExtractor.getAllReleases();
         logger.info(project+" releases extracted.");
 
-        ExtractFromGit gitExtractor = new ExtractFromGit();
+        ExtractFromGit gitExtractor = new ExtractFromGit(releaseList);
         List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList, project);
+        List<Ticket> ticketList = jiraExtractor.getAllTickets(releaseList);
+        List<RevCommit> filteredCommitsOfIssues = gitExtractor.filterCommitsOfIssues(commitList, ticketList);
+        //need to update the ticket list
+        ticketList = gitExtractor.getTicketList();
+        //removing half of the releases before extracting the classes
+        releaseList =  ReleaseUtils.removeHalfReleases(releaseList, ticketList);
+        gitExtractor.setReleaseList(releaseList);
 
     }
 }
