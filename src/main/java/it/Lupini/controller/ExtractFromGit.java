@@ -3,13 +3,19 @@ package it.Lupini.controller;
 import it.Lupini.model.JavaFile;
 import it.Lupini.model.Release;
 import it.Lupini.model.Ticket;
+import it.Lupini.utils.ReleaseUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.util.io.DisabledOutputStream;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +28,8 @@ import java.util.*;
 public class ExtractFromGit {
     private List<Ticket> ticketList;
     private List<Release> releaseList;
+
+    private List<RevCommit> commitList;
     private Path repoPath;
     private String repo;
     private Git git;
@@ -29,6 +37,7 @@ public class ExtractFromGit {
     public ExtractFromGit(List<Release> releaseList){
         this.releaseList = releaseList;
         this.ticketList = null;
+        this.commitList = new ArrayList<>();
     }
 
     public List<Ticket> getTicketList() {
@@ -43,7 +52,6 @@ public class ExtractFromGit {
     }
     public  List<RevCommit> getAllCommits(List<Release> releaseList, String project) throws GitAPIException, IOException {
 
-        List<RevCommit> commitList = new ArrayList<>();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         /////////////////ATTENZIONE POTREBBE NON FUNZIONARE//////////////////
@@ -60,8 +68,7 @@ public class ExtractFromGit {
         //retrieving all comments
         Iterable<RevCommit> commits = git.log().all().call();
 
-            for (RevCommit commit : commits)
-            {
+            for (RevCommit commit : commits) {
                 commitList.add(commit);
 
                 //extracting date of commit
@@ -79,9 +86,7 @@ public class ExtractFromGit {
                     }
                     lowerBoundDate = releaseDate;
                 }
-
             }
-
         return commitList;
     }
 
@@ -106,7 +111,9 @@ public class ExtractFromGit {
         return filteredCommits;
     }
 
-    public void getClasses(List<Release> releasesList) throws IOException {
+    public List<JavaFile> getClasses(List<Release> releasesList) throws IOException {
+
+        List<JavaFile> classes = new ArrayList<>();
 
         for (Release release : releasesList) {
             List<String> classesList = new ArrayList<>();
@@ -119,7 +126,15 @@ public class ExtractFromGit {
                 //to enter the subtrees
                 treeWalk.setRecursive(true);
                 while (treeWalk.next()) {
-                    addJavaFile(treeWalk, release, classesList);
+                    //getting the name of the file
+                    String filename = treeWalk.getPathString();
+                    //checking if it's a java file (not a test) and if it's not on the list
+                    if (filename.endsWith(".java") && !classesList.contains(filename) && !filename.contains("/test/")) {
+                        JavaFile file = new JavaFile(filename);
+                        classesList.add(filename);
+                        release.addClass(file);
+                        classes.add(file);
+                    }
                 }
 
             }
@@ -131,29 +146,86 @@ public class ExtractFromGit {
                 releasesList.get(k).setClasses(releasesList.get(k-1).getClasses());
             }
         }
+
+        setBuggyness(ticketList, classes);
+        keepTrackOfCommitsThatTouchTheClass(classes, commitList);
+
+        return classes;
+
     }
 
 
-    private void addJavaFile(TreeWalk treeWalk, Release release, List<String> fileNameList) throws IOException {
+    public void setBuggyness(List<Ticket> ticketList, List<JavaFile> allProjectClasses) throws IOException {
+        for(JavaFile projectClass: allProjectClasses){
+            projectClass.setBuggyness(false);
+        }
+        for(Ticket ticket: ticketList) {
+            List<RevCommit> commitsContainingTicket = ticket.getCommitList();
+            Release injectedVersion = ticket.getIv();
+            for (RevCommit commit : commitsContainingTicket) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                LocalDate commitDate = LocalDate.parse(formatter.format(commit.getCommitterIdent().getWhen()));
+                if (!commitDate.isAfter(ticket.getResolutionDate())
+                        && !commitDate.isBefore(ticket.getCreationDate())) {
+                    List<String> modifiedClassesNames = getTouchedClassesNames(commit);
+                    Release releaseOfCommit = ReleaseUtils.getRelease(commitDate, releaseList);
+                    for (String modifiedClass : modifiedClassesNames) {
+                        labelBuggyClasses(modifiedClass, injectedVersion, releaseOfCommit, allProjectClasses);
+                    }
+                }
+            }
+        }
+    }
 
-        Repository repository;
+    private void keepTrackOfCommitsThatTouchTheClass(List<JavaFile> allProjectClasses, List<RevCommit> commitList) throws IOException {
+        for(RevCommit commit: commitList){
+            List<String> modifiedClassesNames = getTouchedClassesNames(commit);
+            for(String modifiedClass: modifiedClassesNames){
+                for(JavaFile projectClass: allProjectClasses){
+                    if(projectClass.getName().equals(modifiedClass) && !projectClass.getCommits().contains(commit)) {
+                        projectClass.addCommit(commit);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void labelBuggyClasses(String modifiedClass, Release injectedVersion, Release fixedVersion, List<JavaFile> allProjectClasses) {
+        for(JavaFile projectClass: allProjectClasses){
+            if(projectClass.getName().equals(modifiedClass) && projectClass.getRelease().id() < fixedVersion.id() && projectClass.getRelease().id() >= injectedVersion.id()){
+                projectClass.setBuggyness(true);
+            }
+        }
+    }
+
+    private List<String> getTouchedClassesNames(RevCommit commit) throws IOException {
+
         FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-        repository = repositoryBuilder.setGitDir(new File(this.repo+".git")).readEnvironment()
-                .findGitDir()
+        Repository repository = repositoryBuilder.setGitDir(new File(repo)).readEnvironment() // scan environment GIT_* variables
+                .findGitDir() // scan up the file system tree
                 .setMustExist(true).build();
 
-
-        //goal: aggiungo il file java nella lista di file appartenenti alla release.
-
-        //getting the name of the file
-        String filename = treeWalk.getPathString();
-        //checking if it's a java file and if it's not on the list
-        if (filename.endsWith(".java") && !fileNameList.contains(filename)) {
-            JavaFile file = new JavaFile(filename);
-            fileNameList.add(filename);
-            //file.setLoc(Metrics.linesOfCode(treeWalk, repository)); ?????????????????
-            release.addClass(file);
+        List<String> touchedClassesNames = new ArrayList<>();
+        try(DiffFormatter diffFormatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
+            ObjectReader reader = repository.newObjectReader()) {
+            CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+            ObjectId newTree = commit.getTree();
+            newTreeIter.reset(reader, newTree);
+            RevCommit commitParent = commit.getParent(0);
+            CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
+            ObjectId oldTree = commitParent.getTree();
+            oldTreeIter.reset(reader, oldTree);
+            diffFormatter.setRepository(repository);
+            List<DiffEntry> entries = diffFormatter.scan(oldTreeIter, newTreeIter);
+            for(DiffEntry entry : entries) {
+                if(entry.getNewPath().contains(".java") && !entry.getNewPath().contains("/test/")) {
+                    touchedClassesNames.add(entry.getNewPath());
+                }
+            }
+        } catch(ArrayIndexOutOfBoundsException ignored) {
+            //ignoring when no parent is found
         }
+        return touchedClassesNames;
     }
 
 }

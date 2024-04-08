@@ -1,5 +1,6 @@
 package it.Lupini.controller;
 
+import it.Lupini.model.JavaFile;
 import it.Lupini.model.Release;
 import it.Lupini.model.Ticket;
 import it.Lupini.utils.ReleaseUtils;
@@ -31,6 +32,8 @@ public class ExtractData {
         //removing half of the releases before extracting the classes
         releaseList =  ReleaseUtils.removeHalfReleases(releaseList, ticketList);
         gitExtractor.setReleaseList(releaseList);
+
+        List<JavaFile> classes = gitExtractor.getClasses(releaseList);
 
     }
 }

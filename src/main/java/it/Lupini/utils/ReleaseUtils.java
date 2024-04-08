@@ -4,6 +4,7 @@ import it.Lupini.model.Release;
 import it.Lupini.model.Ticket;
 import org.json.JSONArray;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -58,6 +59,20 @@ public class ReleaseUtils {
         //removeAndSetAVTickets(halfRelease, ticketList);
 
         return half;
+    }
+
+    public static Release getRelease(LocalDate commitDate, List<Release> releaseList) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        LocalDate lowerBoundDate = LocalDate.parse(formatter.format(new Date(0)));
+        for (Release release : releaseList) {
+            LocalDate dateOfRelease = release.releaseDate();
+            if (commitDate.isAfter(lowerBoundDate) && !commitDate.isAfter(dateOfRelease)) {
+                return release;
+            }
+            lowerBoundDate = dateOfRelease;
+        }
+        return null;
     }
 
 

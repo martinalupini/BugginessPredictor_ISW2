@@ -1,5 +1,7 @@
 package it.Lupini.model;
 
+import org.eclipse.jgit.revwalk.RevCommit;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public class JavaFile {
     private String content;
     private Release release;
 
-    private Metrics metrics;
+    private final List<RevCommit> commits;
 
     //???????????????????
     private List<String> oldPaths;
@@ -48,6 +50,7 @@ public class JavaFile {
         this.churn = 0;
         this.avgChurn = 0;
         this.churnList = new ArrayList<>();
+        this.commits = new ArrayList<>();
     }
 
     // get
@@ -73,6 +76,10 @@ public class JavaFile {
 
     public Integer getLOCadded() {
         return locAdded;
+    }
+
+    public List<RevCommit> getCommits(){
+        return this.commits;
     }
 
     public Integer getChurn() {
@@ -104,6 +111,10 @@ public class JavaFile {
     }
 
     // set
+
+    public void addCommit(RevCommit commit){
+        this.commits.add(commit);
+    }
     public void setName(String name) {
         this.name = name;
     }
