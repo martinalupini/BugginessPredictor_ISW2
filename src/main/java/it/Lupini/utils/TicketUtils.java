@@ -13,7 +13,8 @@ public class TicketUtils {
         List<Ticket> ticketsForProportionList = new ArrayList<>();
         List<Ticket> finalTicketsList = new ArrayList<>();
 
-        return finalTicketsList;
+        //return finalTicketsList;
+        return ticketsList;
     }
 
 }

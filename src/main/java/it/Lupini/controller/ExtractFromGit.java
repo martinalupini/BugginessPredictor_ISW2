@@ -12,15 +12,12 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -30,15 +27,65 @@ public class ExtractFromGit {
     private List<Release> releaseList;
 
     private List<RevCommit> commitList;
-    private Path repoPath;
-    private String repo;
     private Git git;
+    private Repository repository;
 
-    public ExtractFromGit(List<Release> releaseList){
+    private File mainDirectory;
+
+    public ExtractFromGit(String projName, String repoURL, List<Release> releaseList) throws IOException, GitAPIException {
+        mainDirectory = new File(projName.toLowerCase());
+        String filename = projName.toLowerCase() + "/temp";
+        File directory = new File(filename);
+
+        if(directory.exists()){
+            //if the directory exists I remove all the files
+            deleteRepository(directory);
+            /*
+            Path dir = Paths.get(filename);
+            Files
+                    .walk(dir)
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(path -> {
+                        try {
+                            Files.delete(path);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+             */
+
+        }
+
+        git = Git.cloneRepository().setURI(repoURL).setDirectory(directory).call();
+        repository = git.getRepository();
         this.releaseList = releaseList;
         this.ticketList = null;
         this.commitList = new ArrayList<>();
     }
+
+    public void terminate() {
+        deleteRepository(mainDirectory);
+    }
+
+
+    private void deleteRepository(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    // Elimina ricorsivamente le directory
+                    deleteRepository(file);
+                } else {
+                    // Elimina il file
+                    file.delete();
+                }
+            }
+        }
+
+        directory.delete();
+    }
+
 
     public List<Ticket> getTicketList() {
         return ticketList;
@@ -54,18 +101,12 @@ public class ExtractFromGit {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        /////////////////ATTENZIONE POTREBBE NON FUNZIONARE//////////////////
-        if(project.toLowerCase().equals("bookkeeper")) {
-            repo = "/wsl$/Ubuntu-20.04/home/martina/isw2/bookkeeper";
-        }else{
-            repo= "/Users/Martina/OneDrive - Universita' degli Studi di Roma Tor Vergata/ISW2/avro";
-        }
-
-        repoPath = Paths.get(repo);
-        //opening existing git repository
-        git = Git.open(repoPath.toFile());
 
         //retrieving all comments
+        if (repository.resolve("HEAD") == null) {
+            System.out.println("Il repository è vuoto.");
+        }
+
         Iterable<RevCommit> commits = git.log().all().call();
 
             for (RevCommit commit : commits) {
@@ -141,7 +182,7 @@ public class ExtractFromGit {
         }
 
         //in case a release does not add new classes but works on the priors
-        for (int k = 0; k<releasesList.size(); k++) {
+        for (int k = 1; k<releasesList.size(); k++) {
             if(releasesList.get(k).getClasses().isEmpty()) {
                 releasesList.get(k).setClasses(releasesList.get(k-1).getClasses());
             }
@@ -199,11 +240,6 @@ public class ExtractFromGit {
     }
 
     private List<String> getTouchedClassesNames(RevCommit commit) throws IOException {
-
-        FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-        Repository repository = repositoryBuilder.setGitDir(new File(repo)).readEnvironment() // scan environment GIT_* variables
-                .findGitDir() // scan up the file system tree
-                .setMustExist(true).build();
 
         List<String> touchedClassesNames = new ArrayList<>();
         try(DiffFormatter diffFormatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
