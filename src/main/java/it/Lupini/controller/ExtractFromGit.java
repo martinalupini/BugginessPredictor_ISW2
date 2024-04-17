@@ -171,7 +171,7 @@ public class ExtractFromGit {
                     String filename = treeWalk.getPathString();
                     //checking if it's a java file (not a test) and if it's not on the list
                     if (filename.endsWith(".java") && !classesList.contains(filename) && !filename.contains("/test/")) {
-                        JavaFile file = new JavaFile(filename);
+                        JavaFile file = new JavaFile(filename, release);
                         classesList.add(filename);
                         release.addClass(file);
                         classes.add(file);
@@ -209,9 +209,10 @@ public class ExtractFromGit {
                 if (!commitDate.isAfter(ticket.getResolutionDate())
                         && !commitDate.isBefore(ticket.getCreationDate())) {
                     List<String> modifiedClassesNames = getTouchedClassesNames(commit);
-                    Release releaseOfCommit = ReleaseUtils.getRelease(commitDate, releaseList);
+                    //Release releaseOfCommit = ReleaseUtils.getRelease(commitDate, releaseList);
                     for (String modifiedClass : modifiedClassesNames) {
-                        labelBuggyClasses(modifiedClass, injectedVersion, releaseOfCommit, allProjectClasses);
+                        //labelBuggyClasses(modifiedClass, injectedVersion, releaseOfCommit, allProjectClasses);
+                        labelBuggyClasses(modifiedClass, injectedVersion, ticket.getFv(), allProjectClasses);
                     }
                 }
             }

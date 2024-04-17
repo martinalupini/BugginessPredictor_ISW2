@@ -38,9 +38,10 @@ public class JavaFile {
 
 
 
-    public JavaFile(String name) {
+    public JavaFile(String name, Release release) {
 
         this.name = name;
+        this.release = release;
         this.buggyness = false;
         this.nr = 0;
         this.nAuth = new ArrayList<>();

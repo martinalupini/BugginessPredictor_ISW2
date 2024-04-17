@@ -1,5 +1,6 @@
 package it.Lupini.utils;
 
+import it.Lupini.model.JavaFile;
 import it.Lupini.model.Release;
 import it.Lupini.model.Ticket;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -142,6 +143,30 @@ public class ReportUtils {
             fileWriter.close();
         } catch (IOException e) {
             logger.info("Error in " + className + " while flushing/closing fileWriter !!!");
+        }
+    }
+
+
+    public static void printClasses(String project, List<JavaFile> classes) throws IOException {
+        project = project.toLowerCase();
+        File file = new File("reportFiles/" + project);
+        if (!file.exists()) {
+            boolean created = file.mkdirs();
+            if (!created) {
+                throw new IOException();
+            }
+        }
+
+        file = new File("reportFiles/" + project+ "/Classes.txt");
+        try(FileWriter fileWriter = new FileWriter(file)) {
+
+            for (JavaFile c: classes){
+                fileWriter.append(c.getName()).append(DELIMITER);
+            }
+
+            flushAndCloseFW(fileWriter, logger, CLASS);
+        } catch (IOException e) {
+            logger.info("Error in writeOnReportFiles when trying to create directory");
         }
     }
 }
