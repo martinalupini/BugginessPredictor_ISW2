@@ -75,6 +75,17 @@ public class ReleaseUtils {
         return null;
     }
 
+    public static void completeAV(Ticket ticket, List<Release> releases){
+        int iv = ticket.getIv().id();
+        int fv = ticket.getFv().id();
+
+        for(Release release : releases){
+            if(release.id() > iv && release.id() < fv ){
+                ticket.addAV(release);
+            }
+        }
+
+    }
 
     //SECONDO ME NON SERVE
     /*

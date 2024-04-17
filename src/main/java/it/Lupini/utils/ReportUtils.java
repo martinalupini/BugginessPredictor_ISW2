@@ -94,10 +94,10 @@ public class ReportUtils {
                     iDs.add(release.releaseName());
                 }
                 fileWriter.append("key= ").append(ticket.getTicketKey())
-                        //.append(", injectedVersion= ") .append(ticket.getIv().releaseName())
+                        .append(", injectedVersion= ") .append(ticket.getIv().releaseName())
                         .append(", openingVersion= ").append(ticket.getOv().releaseName())
                         .append(", fixedVersion= ") .append(ticket.getFv().releaseName())
-                        //.append(", affectedVersions= ").append(String.valueOf(iDs))
+                        .append(", affectedVersions= ").append(String.valueOf(iDs))
                         .append(", numOfCommits= ").append(String.valueOf(ticket.getCommitList().size()))
                         .append(", creationDate= ").append(String.valueOf(ticket.getCreationDate()))
                         .append(", resolutionDate= ").append(String.valueOf(ticket.getResolutionDate())).append(DELIMITER);

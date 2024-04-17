@@ -25,16 +25,17 @@ public class ExtractData {
         ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
         logger.info(project+": releases extracted.");
 
+        List<Ticket> ticketList = jiraExtractor.getAllTickets(releaseList, true);
+        ReportUtils.printTickets(project, ticketList);
+        logger.info(project+": tickets extracted.");
+
+        /*
         ExtractFromGit gitExtractor = new ExtractFromGit(project, repoURL, releaseList);
         List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList, project);
         ReportUtils.printCommits(project, commitList, "AllCommits.txt");
         logger.info(project+": commits extracted.");
 
-        List<Ticket> ticketList = jiraExtractor.getAllTickets(releaseList);
-        ReportUtils.printTickets(project, ticketList);
-        logger.info(project+": tickets extracted.");
 
-        /*
         List<RevCommit> filteredCommitsOfIssues = gitExtractor.filterCommitsOfIssues(commitList, ticketList);
         //need to update the ticket list
         ticketList = gitExtractor.getTicketList();
@@ -52,7 +53,7 @@ public class ExtractData {
 
          */
 
-        gitExtractor.terminate();
+        //gitExtractor.terminate();
 
     }
 }

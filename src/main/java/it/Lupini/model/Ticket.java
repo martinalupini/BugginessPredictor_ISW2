@@ -53,10 +53,6 @@ public class Ticket {
         return av;
     }
 
-    public void setAv(List<Release> av) {
-        this.av = av;
-    }
-
     public String getTicketKey() {
         return ticketID;
     }
@@ -77,6 +73,10 @@ public class Ticket {
 
     public LocalDate getResolutionDate() {
         return resolutionDate;
+    }
+
+    public void addAV(Release release){
+        this.av.add(release);
     }
 
 }

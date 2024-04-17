@@ -54,12 +54,19 @@ public class ExtractFromJira {
     }
 
 
-    public List<Ticket> getAllTickets(List<Release> releasesList) throws IOException, JSONException, URISyntaxException {
+    public List<Ticket> getAllTickets(List<Release> releasesList, boolean fix) throws IOException, JSONException, URISyntaxException {
         List<Ticket> ticketsList = getTickets(releasesList);
-        List<Ticket> fixedTicketsList;
-        fixedTicketsList = TicketUtils.fixTicketList(ticketsList, releasesList, project);
-        fixedTicketsList.sort(Comparator.comparing(Ticket::getResolutionDate));
-        return fixedTicketsList;
+
+        if(fix) {
+            List<Ticket> fixedTicketsList;
+            //after extracting all the commits they are completed by adding the AV (if missing) using proportion
+            fixedTicketsList = TicketUtils.addIVandAV(ticketsList, releasesList);
+            fixedTicketsList.sort(Comparator.comparing(Ticket::getResolutionDate));
+            return fixedTicketsList;
+        }else{
+            return ticketsList;
+        }
+
     }
 
 
@@ -105,9 +112,12 @@ public class ExtractFromJira {
                     continue;
                 }
 
+                //the opening version must be diffrent from the first release
                 if(openingVersion != null && fixedVersion != null && openingVersion.id()!=releasesList.get(0).id()){
                     ticketsList.add(new Ticket(key, creationDate, resolutionDate, openingVersion, fixedVersion, affectedVersionsList));
                 }
+
+                //fixing with proportion
             }
         } while (i < total);
         ticketsList.sort(Comparator.comparing(Ticket::getResolutionDate));
