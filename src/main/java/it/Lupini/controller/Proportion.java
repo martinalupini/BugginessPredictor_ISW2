@@ -107,7 +107,7 @@ public class Proportion {
         int fv = ticket.getFv().id();
         int estimatedIV;
 
-        if(ov==fv){
+        if(ov!=fv){
             estimatedIV = max(1, (int)(fv - proportion*(fv - ov)));
         }else{
             estimatedIV = max(1, (int)(fv - proportion));
