@@ -74,10 +74,10 @@ public class ExtractFromGit {
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    // Elimina ricorsivamente le directory
+                    // recursively deletes the directory
                     deleteRepository(file);
                 } else {
-                    // Elimina il file
+                    // deletes the file
                     file.delete();
                 }
             }
@@ -137,18 +137,18 @@ public class ExtractFromGit {
         List<RevCommit> filteredCommits = new ArrayList<>();
         for (RevCommit commit : commitList) {
             for (Ticket ticket : ticketList) {
-                String commitFullMessage = commit.getFullMessage();
+                String commitMessage = commit.getFullMessage();
                 String ticketKey = ticket.getTicketKey();
-
                 //if the commit contains the ticket key then is a commit related to an issue
-                if (commitFullMessage.contains(ticketKey)) {
+                if (commitMessage.contains(ticketKey)) {
                     filteredCommits.add(commit);
                     ticket.addCommit(commit);
-                    //removing ticket not related to issues from the ticket list
-                    ticketList.removeIf(t-> t.getTicketKey() == ticket.getTicketKey());
                 }
             }
         }
+
+        //removing ticket not related to any issues from the ticket list
+        ticketList.removeIf(ticket -> ticket.getCommitList().isEmpty());
         return filteredCommits;
     }
 

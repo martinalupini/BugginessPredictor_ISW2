@@ -47,8 +47,6 @@ public class Proportion {
             proportion = increment();
         }
 
-        System.out.println("Proportion for ticket "+ticket.getTicketKey()+" "+proportion);
-
         estimatedIV = obtainIV(proportion, ticket);
 
         for(Release release : releaseList){
@@ -72,8 +70,6 @@ public class Proportion {
 
         for(Projects project: Projects.values()){
 
-            System.out.println(project);
-
 
             ExtractFromJira jiraExtractor = new ExtractFromJira(project.toString().toUpperCase());
             List<Release> releaseList = jiraExtractor.getAllReleases();
@@ -83,7 +79,7 @@ public class Proportion {
             //need to obtain all tickets that have AV set
             List<Ticket> consistentTickets = TicketUtils.returnConsistentTickets(allTickets);
             if(consistentTickets.size() >= 5){
-                System.out.println("Calculating proportion if project "+project);
+
                 Proportion proportion = new Proportion();
 
                 for(Ticket t: consistentTickets){
@@ -95,8 +91,6 @@ public class Proportion {
 
         }
 
-        System.out.println(proportionList);
-        System.out.println("median is "+median(proportionList));
         return median(proportionList);
 
 
@@ -130,7 +124,6 @@ public class Proportion {
 
         proportion = (fv - ticket.getIv().id())/denominator;
 
-        //System.out.println(proportion);
         this.proportionList.add(proportion);
         this.totalProportion += proportion;
 

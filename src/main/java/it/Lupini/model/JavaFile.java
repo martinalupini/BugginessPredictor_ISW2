@@ -31,6 +31,8 @@ public class JavaFile {
     private Integer maxChurn;
     private Integer avgChurn;
 
+    private Integer commentLines;
+
     //prevision metric
     private boolean buggyness;
 
@@ -51,6 +53,7 @@ public class JavaFile {
         this.avgChurn = 0;
         this.churnList = new ArrayList<>();
         this.commits = new ArrayList<>();
+        this.commentLines = 0;
     }
 
     // get
@@ -203,5 +206,13 @@ public class JavaFile {
 
     public void setRelease(Release release) {
         this.release = release;
+    }
+
+    public Integer getCommentLines() {
+        return commentLines;
+    }
+
+    public void setCommentLines(Integer commentLines) {
+        this.commentLines = commentLines;
     }
 }

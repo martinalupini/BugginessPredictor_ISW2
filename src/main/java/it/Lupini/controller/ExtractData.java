@@ -29,7 +29,7 @@ public class ExtractData {
         ReportUtils.printTickets(project, ticketList);
         logger.info(project+": tickets extracted.");
 
-        /*
+
         ExtractFromGit gitExtractor = new ExtractFromGit(project, repoURL, releaseList);
         List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList, project);
         ReportUtils.printCommits(project, commitList, "AllCommits.txt");
@@ -42,6 +42,8 @@ public class ExtractData {
         ReportUtils.printCommits(project, filteredCommitsOfIssues, "FilteredCommits.txt");
         logger.info(project+": commits filtered");
 
+        /*
+
         //removing half of the releases before extracting the classes
         releaseList =  ReleaseUtils.removeHalfReleases(releaseList, ticketList);
         gitExtractor.setReleaseList(releaseList);
@@ -53,7 +55,7 @@ public class ExtractData {
 
          */
 
-        //gitExtractor.terminate();
+        gitExtractor.terminate();
 
     }
 }
