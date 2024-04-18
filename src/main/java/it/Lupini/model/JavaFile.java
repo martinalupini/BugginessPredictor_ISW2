@@ -8,9 +8,9 @@ import java.util.List;
 public class JavaFile {
     private String name;
     private String content;
-    private Release release;
+    private Release release;   //release where the class is created
 
-    private final List<RevCommit> commits;
+    private final List<RevCommit> commits;    //list of commits that modified the class' content
 
     //???????????????????
     private List<String> oldPaths;
@@ -38,10 +38,11 @@ public class JavaFile {
 
 
 
-    public JavaFile(String name, Release release) {
+    public JavaFile(String name, Release release, String content) {
 
         this.name = name;
         this.release = release;
+        this.content = content;
         this.buggyness = false;
         this.nr = 0;
         this.nAuth = new ArrayList<>();

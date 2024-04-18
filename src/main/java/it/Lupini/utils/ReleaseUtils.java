@@ -2,6 +2,7 @@ package it.Lupini.utils;
 
 import it.Lupini.model.Release;
 import it.Lupini.model.Ticket;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.json.JSONArray;
 
 import java.text.SimpleDateFormat;
@@ -56,14 +57,13 @@ public class ReleaseUtils {
             half.add(releasesList.get(i));
         }
 
-        //removeAndSetAVTickets(halfRelease, ticketList);
-
         return half;
     }
 
-    public static Release getRelease(LocalDate commitDate, List<Release> releaseList) {
+    public static Release getReleaseOfCommit(RevCommit commit, List<Release> releaseList) {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        LocalDate commitDate = LocalDate.parse(formatter.format(commit.getCommitterIdent().getWhen()));
         LocalDate lowerBoundDate = LocalDate.parse(formatter.format(new Date(0)));
         for (Release release : releaseList) {
             LocalDate dateOfRelease = release.releaseDate();
@@ -87,26 +87,5 @@ public class ReleaseUtils {
 
     }
 
-    //SECONDO ME NON SERVE
-    /*
-    public static void removeAndSetAVTickets(int halfRelease, List<Ticket> ticketList) {
-
-        Iterator<Ticket> iterator = ticketList.iterator();
-        while (iterator.hasNext()) {
-            Ticket t = iterator.next();
-            if (t.getIV() > halfRelease) {    //se IV > halfRelease --> tolgo ticket
-                iterator.remove();
-            }
-            if (t.getOV() > halfRelease || t.getFV() > halfRelease) {       //Se IV < half, ma OV o FV sono > half? tutte le versioni da IV < half ad half sono AV.
-                List<Integer> affectedVersionsListByTicket = new ArrayList<>();
-                for (int k = t.getIV(); k < halfRelease; k++) {
-                    affectedVersionsListByTicket.add(k);
-                }
-                t.setAV(affectedVersionsListByTicket);
-            }
-        }
-    }
-
-     */
 
 }

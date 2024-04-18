@@ -9,6 +9,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -16,6 +17,7 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -25,6 +27,8 @@ import java.util.*;
 public class ExtractFromGit {
     private List<Ticket> ticketList;
     private List<Release> releaseList;
+
+    private List<Release> fullReleaseList;
 
     private List<RevCommit> commitList;
     private Git git;
@@ -95,6 +99,7 @@ public class ExtractFromGit {
     }
 
     public void setReleaseList(List<Release> releaseList) {
+        this.fullReleaseList = this.releaseList;
         this.releaseList = releaseList;
     }
     public  List<RevCommit> getAllCommits(List<Release> releaseList, String project) throws GitAPIException, IOException {
@@ -139,8 +144,14 @@ public class ExtractFromGit {
             for (Ticket ticket : ticketList) {
                 String commitMessage = commit.getFullMessage();
                 String ticketKey = ticket.getTicketKey();
-                //if the commit contains the ticket key then is a commit related to an issue
-                if (commitMessage.contains(ticketKey)) {
+
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                LocalDate commitDate = LocalDate.parse(formatter.format(commit.getCommitterIdent().getWhen()));
+
+                //if the commit contains the ticket key and te date is between the opening
+                // and the resolution then is a commit related to an issue
+                if (commitMessage.contains(ticketKey) && !commitDate.isAfter(ticket.getResolutionDate())
+                        && !commitDate.isBefore(ticket.getCreationDate())) {
                     filteredCommits.add(commit);
                     ticket.addCommit(commit);
                 }
@@ -158,7 +169,11 @@ public class ExtractFromGit {
 
         for (Release release : releasesList) {
             List<String> classesList = new ArrayList<>();
-            for (RevCommit commit : release.getCommitList()) {
+            List<RevCommit> classCommits = release.getCommitList();
+            //ordering from last to first
+            classCommits.sort(Comparator.comparing(o -> o.getCommitterIdent().getWhen(), Comparator.reverseOrder()));
+
+            for (RevCommit commit : classCommits) {
                 //ID associated to the tree of the current commit
                 ObjectId treeId = commit.getTree();
                 // iterating through the tree in the current commit
@@ -169,9 +184,16 @@ public class ExtractFromGit {
                 while (treeWalk.next()) {
                     //getting the name of the file
                     String filename = treeWalk.getPathString();
+
                     //checking if it's a java file (not a test) and if it's not on the list
                     if (filename.endsWith(".java") && !classesList.contains(filename) && !filename.contains("/test/")) {
-                        JavaFile file = new JavaFile(filename, release);
+
+                        ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
+                        ByteArrayOutputStream output = new ByteArrayOutputStream();
+                        loader.copyTo(output);
+                        String fileContent = output.toString();
+
+                        JavaFile file = new JavaFile(filename, release, fileContent );
                         classesList.add(filename);
                         release.addClass(file);
                         classes.add(file);
@@ -189,7 +211,6 @@ public class ExtractFromGit {
         }
 
         setBuggyness(ticketList, classes);
-        keepTrackOfCommitsThatTouchTheClass(classes, commitList);
 
         return classes;
 
@@ -197,45 +218,40 @@ public class ExtractFromGit {
 
 
     public void setBuggyness(List<Ticket> ticketList, List<JavaFile> allProjectClasses) throws IOException {
+
+        //at first the buggyness is set to false
         for(JavaFile projectClass: allProjectClasses){
             projectClass.setBuggyness(false);
         }
+
+        //need to iterate through all tickets to check if a commit related to that ticket touched that class
         for(Ticket ticket: ticketList) {
-            List<RevCommit> commitsContainingTicket = ticket.getCommitList();
+            List<RevCommit> ticketCommitList = ticket.getCommitList();
             Release injectedVersion = ticket.getIv();
-            for (RevCommit commit : commitsContainingTicket) {
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                LocalDate commitDate = LocalDate.parse(formatter.format(commit.getCommitterIdent().getWhen()));
-                if (!commitDate.isAfter(ticket.getResolutionDate())
-                        && !commitDate.isBefore(ticket.getCreationDate())) {
-                    List<String> modifiedClassesNames = getTouchedClassesNames(commit);
-                    //Release releaseOfCommit = ReleaseUtils.getRelease(commitDate, releaseList);
-                    for (String modifiedClass : modifiedClassesNames) {
-                        //labelBuggyClasses(modifiedClass, injectedVersion, releaseOfCommit, allProjectClasses);
-                        labelBuggyClasses(modifiedClass, injectedVersion, ticket.getFv(), allProjectClasses);
-                    }
+
+            for (RevCommit commit : ticketCommitList) {
+                //list of the touched classes of the commit
+                List<String> modifiedClassesNames = getTouchedClassesNames(commit);
+                //the release associated with the commit is the fixed version
+                Release releaseOfCommit = ReleaseUtils.getReleaseOfCommit(commit, fullReleaseList);
+
+                //here I iterate through all the modified classes of the commit and label the classes
+                //in the full list if there is a match (need to check name and release since in the list the same
+                //class appears several times for different releases)
+                for (String modifiedClass : modifiedClassesNames) {
+                    labelBuggyClasses(modifiedClass, injectedVersion, releaseOfCommit, allProjectClasses, commit);
                 }
+
             }
         }
     }
 
-    private void keepTrackOfCommitsThatTouchTheClass(List<JavaFile> allProjectClasses, List<RevCommit> commitList) throws IOException {
-        for(RevCommit commit: commitList){
-            List<String> modifiedClassesNames = getTouchedClassesNames(commit);
-            for(String modifiedClass: modifiedClassesNames){
-                for(JavaFile projectClass: allProjectClasses){
-                    if(projectClass.getName().equals(modifiedClass) && !projectClass.getCommits().contains(commit)) {
-                        projectClass.addCommit(commit);
-                    }
-                }
-            }
-        }
-    }
 
-    private static void labelBuggyClasses(String modifiedClass, Release injectedVersion, Release fixedVersion, List<JavaFile> allProjectClasses) {
+    private static void labelBuggyClasses(String modifiedClass, Release injectedVersion, Release fixedVersion, List<JavaFile> allProjectClasses, RevCommit commit) {
         for(JavaFile projectClass: allProjectClasses){
             if(projectClass.getName().equals(modifiedClass) && projectClass.getRelease().id() < fixedVersion.id() && projectClass.getRelease().id() >= injectedVersion.id()){
                 projectClass.setBuggyness(true);
+                projectClass.addCommit(commit);
             }
         }
     }
@@ -265,4 +281,11 @@ public class ExtractFromGit {
         return touchedClassesNames;
     }
 
+    public List<Release> getFullReleaseList() {
+        return fullReleaseList;
+    }
+
+    public void setFullReleaseList(List<Release> fullReleaseList) {
+        this.fullReleaseList = fullReleaseList;
+    }
 }
