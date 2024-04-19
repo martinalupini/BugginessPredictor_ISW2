@@ -8,6 +8,8 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.Edit;
+import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
@@ -28,6 +30,8 @@ public class ExtractFromGit {
     private List<Ticket> ticketList;
     private List<Release> releaseList;
 
+    private List<RevCommit> issueCommits;
+
     private List<Release> fullReleaseList;
 
     private List<RevCommit> commitList;
@@ -43,6 +47,7 @@ public class ExtractFromGit {
 
         if(directory.exists()){
             //if the directory exists I remove all the files
+            System.out.println("esiste");
             deleteRepository(directory);
             /*
             Path dir = Paths.get(filename);
@@ -69,7 +74,8 @@ public class ExtractFromGit {
     }
 
     public void terminate() {
-        deleteRepository(mainDirectory);
+        deleteRepository(new File("bookkeeper"));
+        //deleteRepository(mainDirectory);
     }
 
 
@@ -160,6 +166,7 @@ public class ExtractFromGit {
 
         //removing ticket not related to any issues from the ticket list
         ticketList.removeIf(ticket -> ticket.getCommitList().isEmpty());
+        this.issueCommits = filteredCommits;
         return filteredCommits;
     }
 
@@ -281,11 +288,58 @@ public class ExtractFromGit {
         return touchedClassesNames;
     }
 
+
+    public void extractAddedOrRemovedLOC(JavaFile projectClass) throws IOException {
+        for(RevCommit commit : projectClass.getCommits()) {
+            try(DiffFormatter diffFormatter = new DiffFormatter(DisabledOutputStream.INSTANCE)) {
+                //getting the parent of the current commit
+                RevCommit parentComm = commit.getParent(0);
+                diffFormatter.setRepository(repository);
+                diffFormatter.setDiffComparator(RawTextComparator.DEFAULT);
+                //getting the differences between the current commit and its parent
+                List<DiffEntry> diffEntries = diffFormatter.scan(parentComm.getTree(), commit.getTree());
+                for(DiffEntry diffEntry : diffEntries) {
+                    //checking if the file path of the current difference matches the class name
+                    if(diffEntry.getNewPath().equals(projectClass.getName())) {
+                        projectClass.addLocAdded(getAddedLines(diffFormatter, diffEntry));
+                        projectClass.addLocRemoved(getDeletedLines(diffFormatter, diffEntry));
+                    }
+                }
+            } catch(ArrayIndexOutOfBoundsException ignored) {
+                //ignoring when no parent is found
+            }
+        }
+    }
+
+    private int getAddedLines(DiffFormatter diffFormatter, DiffEntry entry) throws IOException {
+        int addedLines = 0;
+        for(Edit edit : diffFormatter.toFileHeader(entry).toEditList()) {
+            addedLines += edit.getEndB() - edit.getBeginB();
+        }
+        return addedLines;
+    }
+
+    private int getDeletedLines(DiffFormatter diffFormatter, DiffEntry entry) throws IOException {
+        int deletedLines = 0;
+        for(Edit edit : diffFormatter.toFileHeader(entry).toEditList()) {
+            deletedLines += edit.getEndA() - edit.getBeginA();
+        }
+        return deletedLines;
+    }
+
     public List<Release> getFullReleaseList() {
         return fullReleaseList;
     }
 
     public void setFullReleaseList(List<Release> fullReleaseList) {
         this.fullReleaseList = fullReleaseList;
+    }
+
+    public List<RevCommit> getIssueCommits() {
+        return issueCommits;
+    }
+
+    public void setIssueCommits(List<RevCommit> issueCommits) {
+        this.issueCommits = issueCommits;
     }
 }

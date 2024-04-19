@@ -51,6 +51,11 @@ public class ExtractData {
         ReportUtils.printClasses(project, classes);
         logger.info(project+" classes extracted.");
 
+        //computing the metrics of the classes
+        Metrics metrics = new Metrics(classes, gitExtractor);
+        List<JavaFile> classesWithMetrics = metrics.computeMetrics();
+        logger.info(project+" metrics calculated.");
+
 
         gitExtractor.terminate();
 

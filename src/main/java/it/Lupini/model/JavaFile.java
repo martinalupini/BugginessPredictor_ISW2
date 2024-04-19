@@ -18,12 +18,14 @@ public class JavaFile {
 
     private List<Integer> locAddedList;
 
+    private List<Integer> locRemovedList;
+
     //METRICS
     private Integer loc;
     private Integer locTouched;
-    private Integer nr;
+    private Integer nRevisions;  //number of commits that touch the class
     private Integer nFix;
-    private List<String> nAuth;
+    private Integer nAuth;
     private Integer locAdded;
     private Integer maxLocAdded;
     private Integer avgLocAdded;
@@ -44,8 +46,8 @@ public class JavaFile {
         this.release = release;
         this.content = content;
         this.buggyness = false;
-        this.nr = 0;
-        this.nAuth = new ArrayList<>();
+        this.nRevisions = 0;
+        this.nAuth = 0;
         this.loc = 0;
         this.locAdded = 0;
         this.locTouched = 0;
@@ -58,7 +60,7 @@ public class JavaFile {
         this.commentLines = 0;
     }
 
-    // get
+
     public String getName() {
         return name;
     }
@@ -101,8 +103,8 @@ public class JavaFile {
         return avgLocAdded;
     }
 
-    public Integer getNr() {
-        return nr;
+    public Integer getNRevisions() {
+        return nRevisions;
     }
     public List<Integer> getChurnList() {
         return churnList;
@@ -111,11 +113,9 @@ public class JavaFile {
     public List<Integer> getLocAddedList() {
         return locAddedList;
     }
-    public List<String> getNAuth() {
+    public int getNAuth() {
         return nAuth;
     }
-
-    // set
 
     public void addCommit(RevCommit commit){
         this.commits.add(commit);
@@ -144,8 +144,8 @@ public class JavaFile {
         this.churn = churn;
     }
 
-    public void setNr(Integer nr) {
-        this.nr = nr;
+    public void setNRevisions(Integer nRevisions) {
+        this.nRevisions = nRevisions;
     }
 
     public void setMaxLocAdded(Integer maxLOCAdded) {
@@ -160,15 +160,15 @@ public class JavaFile {
         this.oldPaths = oldPaths;
     }
 
-    public Integer getnFix() {
+    public Integer getNFix() {
         return nFix;
     }
 
-    public void setnFix(Integer nFix) {
+    public void setNFix(Integer nFix) {
         this.nFix = nFix;
     }
 
-    public void setNAuth(List<String> nAuth) {
+    public void setNAuth(int nAuth) {
         this.nAuth = nAuth;
     }
     public void setLocAddedList(List<Integer> locAddedList) {
@@ -182,7 +182,7 @@ public class JavaFile {
         return maxChurn;
     }
 
-    public void setMAXChurn(Integer maxChurn) {
+    public void setMaxChurn(Integer maxChurn) {
         this.maxChurn = maxChurn;
     }
 
@@ -190,7 +190,7 @@ public class JavaFile {
         return avgChurn;
     }
 
-    public void setAVGChurn(Integer aVGChurn) {
+    public void setAvgChurn(Integer aVGChurn) {
         this.avgChurn = aVGChurn;
     }
 
@@ -217,4 +217,27 @@ public class JavaFile {
     public void setCommentLines(Integer commentLines) {
         this.commentLines = commentLines;
     }
+
+    public List<Integer> getLocRemovedList() {
+        return locRemovedList;
+    }
+
+    public void setLocRemovedList(List<Integer> locRemovedList) {
+        this.locRemovedList = locRemovedList;
+    }
+
+    public void addLocAdded(int loc){
+        this.locAddedList.add(loc);
+    }
+
+    public void addLocRemoved(int loc){
+        this.locRemovedList.add(loc);
+    }
+
+    public void sumLocAdded(int loc){
+        this.locAdded += loc;
+    }
+
+
+
 }
