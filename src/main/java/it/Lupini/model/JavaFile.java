@@ -12,10 +12,6 @@ public class JavaFile {
 
     private final List<RevCommit> commits;    //list of commits that modified the class' content
 
-    //???????????????????
-    private List<String> oldPaths;
-    private List<Integer> churnList;
-
     private List<Integer> locAddedList;
 
     private List<Integer> locRemovedList;
@@ -53,9 +49,9 @@ public class JavaFile {
         this.locTouched = 0;
         this.avgLocAdded = 0;
         this.locAddedList = new ArrayList<>();
+        this.locRemovedList = new ArrayList<>();
         this.churn = 0;
         this.avgChurn = 0;
-        this.churnList = new ArrayList<>();
         this.commits = new ArrayList<>();
         this.commentLines = 0;
     }
@@ -67,10 +63,6 @@ public class JavaFile {
 
     public boolean getBuggyness() {
         return buggyness;
-    }
-
-    public List<String> getoldPaths() {
-        return oldPaths;
     }
 
     public Integer getLoc() {
@@ -105,9 +97,6 @@ public class JavaFile {
 
     public Integer getNRevisions() {
         return nRevisions;
-    }
-    public List<Integer> getChurnList() {
-        return churnList;
     }
 
     public List<Integer> getLocAddedList() {
@@ -156,9 +145,6 @@ public class JavaFile {
         this.avgLocAdded = avgLOCAdded;
     }
 
-    public void setOldPaths(List<String> oldPaths) {
-        this.oldPaths = oldPaths;
-    }
 
     public Integer getNFix() {
         return nFix;
@@ -173,9 +159,6 @@ public class JavaFile {
     }
     public void setLocAddedList(List<Integer> locAddedList) {
         this.locAddedList = locAddedList;
-    }
-    public void setChurnList(List<Integer> churnList) {
-        this.churnList = churnList;
     }
 
     public Integer getMAXChurn() {

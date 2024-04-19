@@ -21,11 +21,17 @@ public class Metrics {
 
     public List<JavaFile> computeMetrics() throws IOException {
         countLoc();
+        System.out.println("loc ok");
         countComments();
+        System.out.println("comments ok");
         computeNR();
+        System.out.println("revisions ok");
         computeNFix();
+        System.out.println("fix ok");
         computeNAuth();
+        System.out.println("auth ok");
         computeLOCMetrics();
+        System.out.println("loc metrics ok");
 
         return this.classes;
 
@@ -39,24 +45,30 @@ public class Metrics {
     }
 
     public void countComments() {
+        int i = 0;
 
         for(JavaFile projectClass : classes) {
             int commentCount = 0;
-            String[] lines = projectClass.getContent().split("\\r?\\n");
-            for (String line : lines) {
-                // Verifica se la riga è un commento
-                if (line.trim().startsWith("//")) { // Per commenti su una singola riga
+            String[] lines = projectClass.getContent().split("\r\n|\r|\n");
+
+            while(i<lines.length) {
+                //single-lined comments
+                if (lines[i].trim().startsWith("//")) {
                     commentCount++;
-                } else if (line.trim().startsWith("/*")) { // Per commenti multilinea
+                    i++;
+                    continue;
+                    //multilined comments
+                } else if (lines[i].trim().startsWith("/*")) {
                     commentCount++;
-                    // Avanza fino alla fine del commento multilinea
-                    while (!line.trim().endsWith("*/")) {
-                        // Se la riga termina il commento multilinea, esci dal ciclo
-                        if (!line.trim().endsWith("*/")) {
-                            commentCount++;
-                        }
+                    i++;
+                    while (i<lines.length && !lines[i].trim().endsWith("*/")) {
+                        commentCount++;
+                        i++;
                     }
+
+                    continue;
                 }
+                i++;
             }
 
             projectClass.setCommentLines(commentCount);
@@ -130,6 +142,7 @@ public class Metrics {
 
     private int getMaxVal(List<Integer> list) {
         int i;
+        if(list.size() ==0 ) return 0;
         int max = list.get(0);
         for (i = 1; i < list.size(); i++) {
             if (max < list.get(i)) max = list.get(i);
@@ -141,6 +154,9 @@ public class Metrics {
 
     private int getAvgVal(List<Integer> list){
         int sum = 0;
+
+        if(list.size() ==0 ) return 0;
+
         for(Integer v : list){
             sum += v;
         }

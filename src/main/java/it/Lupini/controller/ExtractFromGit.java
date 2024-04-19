@@ -47,23 +47,7 @@ public class ExtractFromGit {
 
         if(directory.exists()){
             //if the directory exists I remove all the files
-            System.out.println("esiste");
             deleteRepository(directory);
-            /*
-            Path dir = Paths.get(filename);
-            Files
-                    .walk(dir)
-                    .sorted(Comparator.reverseOrder())
-                    .forEach(path -> {
-                        try {
-                            Files.delete(path);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-             */
-
         }
 
         git = Git.cloneRepository().setURI(repoURL).setDirectory(directory).call();
@@ -74,8 +58,7 @@ public class ExtractFromGit {
     }
 
     public void terminate() {
-        deleteRepository(new File("bookkeeper"));
-        //deleteRepository(mainDirectory);
+        deleteRepository(mainDirectory);
     }
 
 

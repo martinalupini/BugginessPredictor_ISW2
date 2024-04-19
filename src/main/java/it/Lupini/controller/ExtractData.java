@@ -56,6 +56,7 @@ public class ExtractData {
         List<JavaFile> classesWithMetrics = metrics.computeMetrics();
         logger.info(project+" metrics calculated.");
 
+        WriteCSV.createCSV(project, classesWithMetrics);
 
         gitExtractor.terminate();
 
