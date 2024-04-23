@@ -10,6 +10,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,7 +23,7 @@ public class ExtractData {
         //This first part is related to the extraction of information from Git and Jira
         ExtractFromJira jiraExtractor = new ExtractFromJira(project.toUpperCase());
         List<Release> releaseList = jiraExtractor.getAllReleases();
-        ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
+        //ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
         logger.info(project+": releases extracted.");
 
         List<Ticket> ticketList = jiraExtractor.getAllTickets(releaseList, true);
@@ -30,7 +31,7 @@ public class ExtractData {
         logger.info(project+": tickets extracted.");
 
         ExtractFromGit gitExtractor = new ExtractFromGit(project, repoURL, releaseList);
-        List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList, project);
+        List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList);
         ReportUtils.printCommits(project, commitList, "AllCommits.txt");
         logger.info(project+": commits extracted.");
 
@@ -39,6 +40,8 @@ public class ExtractData {
         ticketList = gitExtractor.getTicketList();
         ReportUtils.printCommits(project, filteredCommitsOfIssues, "FilteredCommits.txt");
         logger.info(project+": commits filtered");
+
+        ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
 
         //removing half of the releases before extracting the classes
         releaseList =  ReleaseUtils.removeHalfReleases(releaseList, ticketList);
@@ -57,6 +60,18 @@ public class ExtractData {
         logger.info(project+" metrics calculated.");
 
         WriteCSV.createCSV(project, classesWithMetrics);
+        ReportUtils.printSummary(project, ticketList, commitList, filteredCommitsOfIssues);
+    /*
+        List<RevCommit> comm = new ArrayList<>();
+        for(JavaFile file: classes){
+            for(RevCommit c : file.getCommits()){
+                if(!comm.contains(c)) comm.add(c);
+            }
+        }
+
+        System.out.println("total commits related to issues: "+ comm.size());
+
+     */
 
         gitExtractor.terminate();
 

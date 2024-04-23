@@ -91,15 +91,10 @@ public class ExtractFromGit {
         this.fullReleaseList = this.releaseList;
         this.releaseList = releaseList;
     }
-    public  List<RevCommit> getAllCommits(List<Release> releaseList, String project) throws GitAPIException, IOException {
+    public  List<RevCommit> getAllCommits(List<Release> releaseList) throws GitAPIException, IOException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-
-        //retrieving all comments
-        if (repository.resolve("HEAD") == null) {
-            System.out.println("Il repository è vuoto.");
-        }
 
         Iterable<RevCommit> commits = git.log().all().call();
 
@@ -115,13 +110,23 @@ public class ExtractFromGit {
                     LocalDate releaseDate = release.releaseDate();
 
                     //checking if the commit date is after the release date and after the previous release. If so, the
-                    //commit does not belong to that realease
+                    //commit does not belong to that release
                     if (commitDate.isAfter(lowerBoundDate) && !commitDate.isAfter(releaseDate)) {
                         release.addCommit(commit);
                     }
                     lowerBoundDate = releaseDate;
                 }
+
             }
+
+
+        releaseList.removeIf(release -> release.getCommitList().isEmpty());
+        int i = 0;
+        for (Release release : releaseList) {
+            release.setId(++i);
+        }
+
+
         return commitList;
     }
 
@@ -201,6 +206,8 @@ public class ExtractFromGit {
         }
 
         setBuggyness(ticketList, classes);
+        // checking on all commits???
+        addCommitsToClass(classes, commitList);
 
         return classes;
 
@@ -237,11 +244,27 @@ public class ExtractFromGit {
     }
 
 
+    public void addCommitsToClass(List<JavaFile> classes, List<RevCommit> commits) throws IOException {
+
+        for(RevCommit commit: commits){
+            Release releaseOfCommit = ReleaseUtils.getReleaseOfCommit(commit, fullReleaseList);
+            List<String> modifiedClassesNames = getTouchedClassesNames(commit);
+            for(String modifiedClass: modifiedClassesNames){
+                for(JavaFile projectClass: classes){
+                    if(projectClass.getRelease().equals(releaseOfCommit) && projectClass.getName().equals(modifiedClass) && !projectClass.getCommits().contains(commit)) {
+                        projectClass.addCommit(commit);
+                    }
+                }
+            }
+        }
+    }
+
+
     private static void labelBuggyClasses(String modifiedClass, Release injectedVersion, Release fixedVersion, List<JavaFile> allProjectClasses, RevCommit commit) {
         for(JavaFile projectClass: allProjectClasses){
             if(projectClass.getName().equals(modifiedClass) && projectClass.getRelease().id() < fixedVersion.id() && projectClass.getRelease().id() >= injectedVersion.id()){
                 projectClass.setBuggyness(true);
-                projectClass.addCommit(commit);
+                projectClass.addFixCommit(commit);
             }
         }
     }

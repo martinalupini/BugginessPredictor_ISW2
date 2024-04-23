@@ -22,7 +22,7 @@ public class WriteCSV {
         file = new File("csvFiles/" + project+ "/Dataset.csv");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
-            fileWriter.append("Name, Release, LOC, #Comments, #Revisions, #Auth, #Fix, LOC touched, LOC added, MAX LOC added, AVG LOC added, churn, MAX churn, AVG churn").append("\n");
+            fileWriter.append("Name, Release, LOC, #Comments, #Revisions, #Auth, #Fix, LOC touched, LOC added, MAX LOC added, AVG LOC added, churn, MAX churn, AVG churn, Buggy").append("\n");
             for (JavaFile c: classes){
                 fileWriter.append(c.getName()).append(",")
                         .append(c.getRelease().releaseName()).append(",")
@@ -37,7 +37,8 @@ public class WriteCSV {
                         .append(String.valueOf(c.getAvglocAdded())).append(",")
                         .append(String.valueOf(c.getChurn())).append(",")
                         .append(String.valueOf(c.getMAXChurn())).append(",")
-                        .append(String.valueOf(c.getAVGChurn())).append("\n");
+                        .append(String.valueOf(c.getAVGChurn())).append(",")
+                        .append(String.valueOf(c.getBuggyness())).append("\n");
             }
 
             fileWriter.flush();

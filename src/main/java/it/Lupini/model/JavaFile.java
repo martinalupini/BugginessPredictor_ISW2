@@ -12,6 +12,8 @@ public class JavaFile {
 
     private final List<RevCommit> commits;    //list of commits that modified the class' content
 
+    private List<RevCommit> fixCommits;
+
     private List<Integer> locAddedList;
 
     private List<Integer> locRemovedList;
@@ -54,6 +56,7 @@ public class JavaFile {
         this.avgChurn = 0;
         this.commits = new ArrayList<>();
         this.commentLines = 0;
+        this.fixCommits = new ArrayList<>();
     }
 
 
@@ -121,14 +124,6 @@ public class JavaFile {
         this.loc = loc;
     }
 
-    public void setLOCadded(Integer locAdded) {
-        this.locAdded = locAdded;
-    }
-
-    public void setLOCtouched(Integer locTouched) {
-        this.locTouched = locTouched;
-    }
-
     public void setChurn(Integer churn) {
         this.churn = churn;
     }
@@ -157,10 +152,6 @@ public class JavaFile {
     public void setNAuth(int nAuth) {
         this.nAuth = nAuth;
     }
-    public void setLocAddedList(List<Integer> locAddedList) {
-        this.locAddedList = locAddedList;
-    }
-
     public Integer getMAXChurn() {
         return maxChurn;
     }
@@ -205,9 +196,6 @@ public class JavaFile {
         return locRemovedList;
     }
 
-    public void setLocRemovedList(List<Integer> locRemovedList) {
-        this.locRemovedList = locRemovedList;
-    }
 
     public void addLocAdded(int loc){
         this.locAddedList.add(loc);
@@ -221,6 +209,18 @@ public class JavaFile {
         this.locAdded += loc;
     }
 
+    public void sumChurn(int churn){ this.churn += churn;}
 
 
+    public List<RevCommit> getFixCommits() {
+        return fixCommits;
+    }
+
+    public void addFixCommit(RevCommit fixCommit) {
+        this.fixCommits.add(fixCommit);
+    }
+
+    public void addLOCTouched(int touchedLinesOfCode) {
+        this.locTouched += touchedLinesOfCode;
+    }
 }

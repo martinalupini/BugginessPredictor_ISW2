@@ -21,7 +21,7 @@ public class ReportUtils {
     public static final String CLASS = ReportUtils.class.getName();
     private static final Logger logger = Logger.getLogger(CLASS);
 
-    public static void printSummary(String project, List<Release> releaseList, List<Ticket> ticketList, List<RevCommit> commitList, List<RevCommit> filteredCommitsOfIssues) throws IOException {
+    public static void printSummary(String project, List<Ticket> ticketList, List<RevCommit> commitList, List<RevCommit> filteredCommitsOfIssues) throws IOException {
         project = project.toLowerCase();
         File file = new File("reportFiles/" + project);
         if (!file.exists()) {
@@ -31,16 +31,12 @@ public class ReportUtils {
             }
         }
 
-        file = new File("reportFiles/" + project + "Summary.txt");
+        file = new File("reportFiles/" + project + "/"+ "Summary.txt");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
-            fileWriter.append("----------------------------------------------------------\n")
-                    .append("EXTRACTION INFO:\n")
-                    .append(String.valueOf(releaseList.size())).append(" RELEASES \n")
-                    .append(String.valueOf(ticketList.size())).append(" TICKETS \n")
+            fileWriter.append(String.valueOf(ticketList.size())).append(" TICKETS \n")
                     .append(String.valueOf(commitList.size())).append(" TOTAL COMMITS \n")
-                    .append(String.valueOf(filteredCommitsOfIssues.size())).append(" COMMITS CONTAINING BUG-ISSUES")
-                    .append("\n----------------------------------------------------------\n\n");
+                    .append(String.valueOf(filteredCommitsOfIssues.size())).append(" COMMITS CONTAINING BUG-ISSUES");
 
             flushAndCloseFW(fileWriter, logger, CLASS);
         } catch (IOException e) {
@@ -161,7 +157,10 @@ public class ReportUtils {
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             for (JavaFile c: classes){
-                fileWriter.append(c.getName()).append(DELIMITER);
+                String commit;
+                if(c.getCommits().isEmpty())  commit = "";
+                else commit = c.getCommits().get(0).toString();
+                fileWriter.append("NAME: ").append(c.getName()).append(" FIRST COMMIT: ").append(commit).append(" #COMMITS: ").append(String.valueOf(c.getCommits().size())).append(DELIMITER);
             }
 
             flushAndCloseFW(fileWriter, logger, CLASS);
@@ -169,4 +168,5 @@ public class ReportUtils {
             logger.info("Error in writeOnReportFiles when trying to create directory");
         }
     }
+
 }

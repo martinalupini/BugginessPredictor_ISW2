@@ -9,9 +9,9 @@ import java.util.List;
 
 public class Metrics {
 
-    private List<JavaFile> classes;
+    private final List<JavaFile> classes;
 
-    private ExtractFromGit gitExtractor;
+    private final ExtractFromGit gitExtractor;
 
     public Metrics(List<JavaFile> classes, ExtractFromGit gitExtractor){
         this.classes = classes;
@@ -21,17 +21,11 @@ public class Metrics {
 
     public List<JavaFile> computeMetrics() throws IOException {
         countLoc();
-        System.out.println("loc ok");
         countComments();
-        System.out.println("comments ok");
         computeNR();
-        System.out.println("revisions ok");
         computeNFix();
-        System.out.println("fix ok");
         computeNAuth();
-        System.out.println("auth ok");
         computeLOCMetrics();
-        System.out.println("loc metrics ok");
 
         return this.classes;
 
@@ -45,9 +39,9 @@ public class Metrics {
     }
 
     public void countComments() {
-        int i = 0;
 
         for(JavaFile projectClass : classes) {
+            int i = 0;
             int commentCount = 0;
             String[] lines = projectClass.getContent().split("\r\n|\r|\n");
 
@@ -57,11 +51,11 @@ public class Metrics {
                     commentCount++;
                     i++;
                     continue;
-                    //multilined comments
+                    //multi-lined comments
                 } else if (lines[i].trim().startsWith("/*")) {
                     commentCount++;
                     i++;
-                    while (i<lines.length && !lines[i].trim().endsWith("*/")) {
+                    while (i<lines.length && !lines[i].trim().startsWith("*/")) {
                         commentCount++;
                         i++;
                     }
@@ -84,15 +78,8 @@ public class Metrics {
 
 
     private void computeNFix(){
-        int nFix;
         for(JavaFile projectClass : classes) {
-            nFix = 0;
-            for(RevCommit commitThatTouchesTheClass: projectClass.getCommits()) {
-                if (gitExtractor.getIssueCommits().contains(commitThatTouchesTheClass)) {
-                    nFix++;
-                }
-            }
-            projectClass.setNFix(nFix);
+            projectClass.setNFix(projectClass.getFixCommits().size());
         }
     }
 
@@ -127,22 +114,23 @@ public class Metrics {
                 int touchedLinesOfCode = addedLineOfCode + removedLineOfCode;
 
                 projectClass.sumLocAdded(addedLineOfCode);
+                projectClass.sumChurn(churningFactor);
                 churnOfClass.add(churningFactor);
-                projectClass.setLOCtouched(touchedLinesOfCode);
+                projectClass.addLOCTouched(touchedLinesOfCode);
 
             }
 
             projectClass.setMaxLocAdded(getMaxVal(locAddedByClass));
             projectClass.setMaxChurn(getMaxVal(churnOfClass));
             projectClass.setAvgLOCAdded(getAvgVal(locAddedByClass));
-            projectClass.setAvgChurn(getMaxVal(churnOfClass));
+            projectClass.setAvgChurn(getAvgVal(churnOfClass));
 
         }
     }
 
     private int getMaxVal(List<Integer> list) {
         int i;
-        if(list.size() ==0 ) return 0;
+        if(list.isEmpty() ) return 0;
         int max = list.get(0);
         for (i = 1; i < list.size(); i++) {
             if (max < list.get(i)) max = list.get(i);
@@ -155,7 +143,7 @@ public class Metrics {
     private int getAvgVal(List<Integer> list){
         int sum = 0;
 
-        if(list.size() ==0 ) return 0;
+        if(list.isEmpty() ) return 0;
 
         for(Integer v : list){
             sum += v;
