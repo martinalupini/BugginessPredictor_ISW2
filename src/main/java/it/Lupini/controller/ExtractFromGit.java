@@ -72,8 +72,6 @@ public class ExtractFromGit {
         commits.forEach(commitList::add);
 
             for (RevCommit commit : commitList) {
-                //commitList.add(commit);
-
 
                 //extracting date of commit
                 LocalDate commitDate = LocalDate.parse(formatter.format(commit.getCommitterIdent().getWhen()));
