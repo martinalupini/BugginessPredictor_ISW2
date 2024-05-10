@@ -5,6 +5,7 @@ import it.Lupini.model.Release;
 import it.Lupini.model.Ticket;
 import it.Lupini.utils.ReleaseUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -38,53 +39,23 @@ public class ExtractFromGit {
     private Git git;
     private Repository repository;
 
-    private File mainDirectory;
 
     public ExtractFromGit(String projName, String repoURL, List<Release> releaseList) throws IOException, GitAPIException {
-        mainDirectory = new File(projName.toLowerCase());
-        String filename = projName.toLowerCase() + "/temp";
-        File directory = new File(filename);
+        InitCommand init = Git.init();
+        File file = new File("C:/Users/Martina/ISW/"+projName.toLowerCase()+"/.git");
+        init.setDirectory(file);
+        this.git = Git.open(file);
 
-        if(directory.exists()){
-            //if the directory exists I remove all the files
-            deleteRepository(directory);
-        }
-
-        git = Git.cloneRepository().setURI(repoURL).setDirectory(directory).call();
         repository = git.getRepository();
         this.releaseList = releaseList;
         this.ticketList = null;
         this.commitList = new ArrayList<>();
     }
 
-    public void terminate() {
-        deleteRepository(mainDirectory);
-    }
-
-
-    private void deleteRepository(File directory) {
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    // recursively deletes the directory
-                    deleteRepository(file);
-                } else {
-                    // deletes the file
-                    file.delete();
-                }
-            }
-        }
-
-        directory.delete();
-    }
 
 
     public List<Ticket> getTicketList() {
         return ticketList;
-    }
-    public void setTicketList(List<Ticket> ticketList) {
-        this.ticketList = ticketList;
     }
 
     public void setReleaseList(List<Release> releaseList) {
@@ -98,8 +69,11 @@ public class ExtractFromGit {
 
         Iterable<RevCommit> commits = git.log().all().call();
 
-            for (RevCommit commit : commits) {
-                commitList.add(commit);
+        commits.forEach(commitList::add);
+
+            for (RevCommit commit : commitList) {
+                //commitList.add(commit);
+
 
                 //extracting date of commit
                 LocalDate commitDate = LocalDate.parse(formatter.format(commit.getCommitterIdent().getWhen()));
@@ -205,9 +179,10 @@ public class ExtractFromGit {
             }
         }
 
-        setBuggyness(ticketList, classes);
         // checking on all commits???
         addCommitsToClass(classes, commitList);
+        setBuggyness(ticketList, classes);
+
 
         return classes;
 
@@ -262,9 +237,11 @@ public class ExtractFromGit {
 
     private static void labelBuggyClasses(String modifiedClass, Release injectedVersion, Release fixedVersion, List<JavaFile> allProjectClasses, RevCommit commit) {
         for(JavaFile projectClass: allProjectClasses){
+            if(projectClass.getCommits().contains(commit) && !projectClass.getFixCommits().contains(commit)){
+                projectClass.addFixCommit(commit);
+            }
             if(projectClass.getName().equals(modifiedClass) && projectClass.getRelease().id() < fixedVersion.id() && projectClass.getRelease().id() >= injectedVersion.id()){
                 projectClass.setBuggyness(true);
-                projectClass.addFixCommit(commit);
             }
         }
     }
@@ -333,19 +310,4 @@ public class ExtractFromGit {
         return deletedLines;
     }
 
-    public List<Release> getFullReleaseList() {
-        return fullReleaseList;
-    }
-
-    public void setFullReleaseList(List<Release> fullReleaseList) {
-        this.fullReleaseList = fullReleaseList;
-    }
-
-    public List<RevCommit> getIssueCommits() {
-        return issueCommits;
-    }
-
-    public void setIssueCommits(List<RevCommit> issueCommits) {
-        this.issueCommits = issueCommits;
-    }
 }

@@ -117,7 +117,6 @@ public class ExtractFromJira {
                     ticketsList.add(new Ticket(key, creationDate, resolutionDate, openingVersion, fixedVersion, affectedVersionsList));
                 }
 
-                //fixing with proportion
             }
         } while (i < total);
         ticketsList.sort(Comparator.comparing(Ticket::getResolutionDate));

@@ -60,7 +60,7 @@ public class ReportUtils {
             for (RevCommit commit: commitList){
                 fileWriter.append("id= ").append(commit.getName())
                         .append(", committer= ").append(commit.getCommitterIdent().getName())
-                        .append(", message= ").append(commit.getFullMessage())
+                        //.append(", message= ").append(commit.getFullMessage())
                         .append(", creationDate= ").append(String.valueOf(LocalDate.parse((new SimpleDateFormat("yyyy-MM-dd").format(commit.getCommitterIdent().getWhen()))))).append(DELIMITER);
             }
 

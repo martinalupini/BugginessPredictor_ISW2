@@ -10,7 +10,6 @@ import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -61,19 +60,6 @@ public class ExtractData {
 
         WriteCSV.createCSV(project, classesWithMetrics);
         ReportUtils.printSummary(project, ticketList, commitList, filteredCommitsOfIssues);
-    /*
-        List<RevCommit> comm = new ArrayList<>();
-        for(JavaFile file: classes){
-            for(RevCommit c : file.getCommits()){
-                if(!comm.contains(c)) comm.add(c);
-            }
-        }
-
-        System.out.println("total commits related to issues: "+ comm.size());
-
-     */
-
-        gitExtractor.terminate();
 
     }
 }
