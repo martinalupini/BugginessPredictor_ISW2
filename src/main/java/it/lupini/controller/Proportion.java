@@ -121,7 +121,7 @@ public class Proportion {
             denominator = fv-ov;
         }
 
-        proportion = (fv - ticket.getIv().id())/denominator;
+        proportion = (float)(fv - ticket.getIv().id())/denominator;
 
         this.proportionList.add(proportion);
         this.totalProportion += proportion;
