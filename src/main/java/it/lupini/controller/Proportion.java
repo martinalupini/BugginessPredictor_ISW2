@@ -1,8 +1,8 @@
-package it.Lupini.controller;
+package it.lupini.controller;
 
-import it.Lupini.model.Release;
-import it.Lupini.model.Ticket;
-import it.Lupini.utils.TicketUtils;
+import it.lupini.model.Release;
+import it.lupini.model.Ticket;
+import it.lupini.utils.TicketUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -65,7 +65,7 @@ public class Proportion {
 
         if(P_coldStart != 0)  return P_coldStart;
 
-        List<Float> proportionList = new ArrayList<>();
+        List<Float> proportionListTemp = new ArrayList<>();
 
         for(Projects project: Projects.values()){
 
@@ -85,12 +85,12 @@ public class Proportion {
                     proportion.addProportion(t);
                 }
 
-                proportionList.add(proportion.increment());
+                proportionListTemp.add(proportion.increment());
             }
 
         }
 
-        return median(proportionList);
+        return median(proportionListTemp);
 
 
     }

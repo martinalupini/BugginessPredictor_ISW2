@@ -1,10 +1,10 @@
-package it.Lupini.controller;
+package it.lupini.controller;
 
-import it.Lupini.model.JavaFile;
-import it.Lupini.model.Release;
-import it.Lupini.model.Ticket;
-import it.Lupini.utils.ReleaseUtils;
-import it.Lupini.utils.ReportUtils;
+import it.lupini.model.JavaFile;
+import it.lupini.model.Release;
+import it.lupini.model.Ticket;
+import it.lupini.utils.ReleaseUtils;
+import it.lupini.utils.ReportUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 
 public class ExtractData {
 
+    private ExtractData(){}
+
     private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
 
     public static void buildDataset(String project) throws IOException, URISyntaxException, GitAPIException {
@@ -22,7 +24,6 @@ public class ExtractData {
         //This first part is related to the extraction of information from Git and Jira
         ExtractFromJira jiraExtractor = new ExtractFromJira(project.toUpperCase());
         List<Release> releaseList = jiraExtractor.getAllReleases();
-        //ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
         logger.info(project+": releases extracted.");
 
         List<Ticket> ticketList = jiraExtractor.getAllTickets(releaseList, true);
@@ -43,7 +44,7 @@ public class ExtractData {
         ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
 
         //removing half of the releases before extracting the classes
-        releaseList =  ReleaseUtils.removeHalfReleases(releaseList, ticketList);
+        releaseList =  ReleaseUtils.removeHalfReleases(releaseList);
         gitExtractor.setReleaseList(releaseList);
         ReportUtils.printReleases(project, releaseList, "HalfReleases.txt");
         logger.info(project+": removed half releases.");

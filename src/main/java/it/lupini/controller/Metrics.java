@@ -1,6 +1,6 @@
-package it.Lupini.controller;
+package it.lupini.controller;
 
-import it.Lupini.model.JavaFile;
+import it.lupini.model.JavaFile;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package it.Lupini.utils;
+package it.lupini.utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

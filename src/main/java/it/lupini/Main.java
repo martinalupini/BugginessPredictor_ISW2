@@ -1,6 +1,6 @@
-package it.Lupini;
+package it.lupini;
 
-import it.Lupini.controller.ExtractData;
+import it.lupini.controller.ExtractData;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import java.io.IOException;

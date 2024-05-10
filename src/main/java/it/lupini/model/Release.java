@@ -1,4 +1,4 @@
-package it.Lupini.model;
+package it.lupini.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

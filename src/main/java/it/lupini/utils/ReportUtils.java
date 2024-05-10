@@ -1,8 +1,8 @@
-package it.Lupini.utils;
+package it.lupini.utils;
 
-import it.Lupini.model.JavaFile;
-import it.Lupini.model.Release;
-import it.Lupini.model.Ticket;
+import it.lupini.model.JavaFile;
+import it.lupini.model.Release;
+import it.lupini.model.Ticket;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.File;

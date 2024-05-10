@@ -1,6 +1,6 @@
-package it.Lupini.controller;
+package it.lupini.controller;
 
-import it.Lupini.model.JavaFile;
+import it.lupini.model.JavaFile;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class WriteCSV {
+
+    private WriteCSV(){}
 
     public static void createCSV(String project, List<JavaFile> classes) throws IOException {
         project = project.toLowerCase();
@@ -43,7 +45,7 @@ public class WriteCSV {
 
             fileWriter.flush();
         } catch (IOException e) {
-
+            //ignore
         }
     }
 }

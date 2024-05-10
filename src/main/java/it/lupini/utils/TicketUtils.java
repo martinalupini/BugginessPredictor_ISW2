@@ -1,8 +1,8 @@
-package it.Lupini.utils;
+package it.lupini.utils;
 
-import it.Lupini.controller.Proportion;
-import it.Lupini.model.Release;
-import it.Lupini.model.Ticket;
+import it.lupini.controller.Proportion;
+import it.lupini.model.Release;
+import it.lupini.model.Ticket;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TicketUtils {
+
+    private TicketUtils(){}
 
     public static List<Ticket> addIVandAV(List<Ticket> ticketsList, List<Release> releasesList) throws IOException, URISyntaxException {
         List<Ticket> finalTicketsList = new ArrayList<>();

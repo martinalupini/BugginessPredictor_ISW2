@@ -1,9 +1,9 @@
-package it.Lupini.controller;
+package it.lupini.controller;
 
-import it.Lupini.model.JavaFile;
-import it.Lupini.model.Release;
-import it.Lupini.model.Ticket;
-import it.Lupini.utils.ReleaseUtils;
+import it.lupini.model.JavaFile;
+import it.lupini.model.Release;
+import it.lupini.model.Ticket;
+import it.lupini.utils.ReleaseUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -40,7 +40,7 @@ public class ExtractFromGit {
     private Repository repository;
 
 
-    public ExtractFromGit(String projName,  List<Release> releaseList) throws IOException, GitAPIException {
+    public ExtractFromGit(String projName,  List<Release> releaseList) throws IOException {
         InitCommand init = Git.init();
         File file = new File("C:/Users/Martina/ISW/"+projName.toLowerCase()+"/.git");
         init.setDirectory(file);

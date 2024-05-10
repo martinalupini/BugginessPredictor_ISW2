@@ -1,7 +1,7 @@
-package it.Lupini.utils;
+package it.lupini.utils;
 
-import it.Lupini.model.Release;
-import it.Lupini.model.Ticket;
+import it.lupini.model.Release;
+import it.lupini.model.Ticket;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.json.JSONArray;
 
@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class ReleaseUtils {
+
+    private ReleaseUtils(){}
 
     public static List<Release> returnAffectedVersions(JSONArray affectedVersionsArray, List<Release> releasesList) {
         List<Release> existingAffectedVersions = new ArrayList<>();
@@ -45,7 +47,7 @@ public class ReleaseUtils {
     }
 
 
-    public static List<Release> removeHalfReleases(List<Release> releasesList, List<Ticket> ticketList) {
+    public static List<Release> removeHalfReleases(List<Release> releasesList) {
         List<Release> half = new ArrayList<>();
 
         float releaseNumber = releasesList.size();

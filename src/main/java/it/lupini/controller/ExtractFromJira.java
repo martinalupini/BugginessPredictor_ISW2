@@ -1,9 +1,9 @@
-package it.Lupini.controller;
+package it.lupini.controller;
 
-import it.Lupini.model.*;
-import it.Lupini.utils.JsonUtils;
-import it.Lupini.utils.ReleaseUtils;
-import it.Lupini.utils.TicketUtils;
+import it.lupini.model.*;
+import it.lupini.utils.JsonUtils;
+import it.lupini.utils.ReleaseUtils;
+import it.lupini.utils.TicketUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

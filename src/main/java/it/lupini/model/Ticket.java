@@ -1,4 +1,4 @@
-package it.Lupini.model;
+package it.lupini.model;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
