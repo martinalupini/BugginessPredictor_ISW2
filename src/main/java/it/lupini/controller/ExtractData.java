@@ -20,26 +20,31 @@ public class ExtractData {
     private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
 
     public static void buildDataset(String project) throws IOException, URISyntaxException, GitAPIException {
+        String print;
 
         //This first part is related to the extraction of information from Git and Jira
         ExtractFromJira jiraExtractor = new ExtractFromJira(project.toUpperCase());
         List<Release> releaseList = jiraExtractor.getAllReleases();
-        logger.info(project+": releases extracted.");
+        print = project+": releases extracted.";
+        logger.info(print);
 
         List<Ticket> ticketList = jiraExtractor.getAllTickets(releaseList, true);
         ReportUtils.printTickets(project, ticketList);
-        logger.info(project+": tickets extracted.");
+        print = project+": tickets extracted.";
+        logger.info(print);
 
         ExtractFromGit gitExtractor = new ExtractFromGit(project, releaseList);
         List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList);
         ReportUtils.printCommits(project, commitList, "AllCommits.txt");
-        logger.info(project+": commits extracted.");
+        print = project+": commits extracted.";
+        logger.info(print);
 
         List<RevCommit> filteredCommitsOfIssues = gitExtractor.filterCommitsOfIssues(commitList, ticketList);
         //need to update the ticket list
         ticketList = gitExtractor.getTicketList();
         ReportUtils.printCommits(project, filteredCommitsOfIssues, "FilteredCommits.txt");
-        logger.info(project+": commits filtered");
+        print = project+": commits filtered.";
+        logger.info(print);
 
         ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
 
@@ -47,17 +52,20 @@ public class ExtractData {
         releaseList =  ReleaseUtils.removeHalfReleases(releaseList);
         gitExtractor.setReleaseList(releaseList);
         ReportUtils.printReleases(project, releaseList, "HalfReleases.txt");
-        logger.info(project+": removed half releases.");
+        print = project+": removed half releases.";
+        logger.info(print);
 
         //extracting all the classes of the project
         List<JavaFile> classes = gitExtractor.getClasses(releaseList);
         ReportUtils.printClasses(project, classes);
-        logger.info(project+" classes extracted.");
+        print = project+": classes extracted.";
+        logger.info(print);
 
         //computing the metrics of the classes
         Metrics metrics = new Metrics(classes, gitExtractor);
         List<JavaFile> classesWithMetrics = metrics.computeMetrics();
-        logger.info(project+" metrics calculated.");
+        print = project+": metrics calculated.";
+        logger.info(print);
 
         WriteCSV.createCSV(project, classesWithMetrics);
         ReportUtils.printSummary(project, ticketList, commitList, filteredCommitsOfIssues);

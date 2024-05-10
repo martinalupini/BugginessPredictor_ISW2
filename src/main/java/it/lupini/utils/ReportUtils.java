@@ -17,13 +17,18 @@ import java.util.logging.Logger;
 
 public class ReportUtils {
 
+    private ReportUtils(){}
+
     public static final String DELIMITER = "\n------------------------------------------------------------------------------------------------\n";
     public static final String CLASS = ReportUtils.class.getName();
     private static final Logger logger = Logger.getLogger(CLASS);
+    private static final String MAINDIR = "reportFiles/";
+    public static final String SLASH = "/";
+    public static final String ERROR = "Error in writeOnReportFiles when trying to create directory";
 
     public static void printSummary(String project, List<Ticket> ticketList, List<RevCommit> commitList, List<RevCommit> filteredCommitsOfIssues) throws IOException {
         project = project.toLowerCase();
-        File file = new File("reportFiles/" + project);
+        File file = new File(MAINDIR + project);
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -31,7 +36,7 @@ public class ReportUtils {
             }
         }
 
-        file = new File("reportFiles/" + project + "/"+ "Summary.txt");
+        file = new File(MAINDIR + project + SLASH+ "Summary.txt");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             fileWriter.append(String.valueOf(ticketList.size())).append(" TICKETS \n")
@@ -40,13 +45,13 @@ public class ReportUtils {
 
             flushAndCloseFW(fileWriter, logger, CLASS);
         } catch (IOException e) {
-            logger.info("Error in writeOnReportFiles when trying to create directory");
+            logger.info(ERROR);
         }
     }
 
     public static void printCommits( String project, List<RevCommit> commitList, String name) throws IOException {
         project = project.toLowerCase();
-        File file = new File("reportFiles/" + project);
+        File file = new File(MAINDIR + project);
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -54,7 +59,7 @@ public class ReportUtils {
             }
         }
 
-        file = new File("reportFiles/" + project+ "/" + name);
+        file = new File(MAINDIR + project+ SLASH + name);
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             for (RevCommit commit: commitList){
@@ -66,13 +71,13 @@ public class ReportUtils {
 
             flushAndCloseFW(fileWriter, logger, CLASS);
         } catch (IOException e) {
-            logger.info("Error in writeOnReportFiles when trying to create directory");
+            logger.info(ERROR);
         }
     }
 
     public static void printTickets(String project, List<Ticket> ticketList) throws IOException {
         project = project.toLowerCase();
-        File file = new File("reportFiles/" + project);
+        File file = new File(MAINDIR + project);
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -80,7 +85,7 @@ public class ReportUtils {
             }
         }
 
-        file = new File("reportFiles/" + project+ "/"+ "AllTickets.txt");
+        file = new File(MAINDIR + project+ SLASH+ "AllTickets.txt");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             List<Ticket> ticketOrderedByCreation = new ArrayList<>(ticketList);
@@ -102,13 +107,13 @@ public class ReportUtils {
 
             flushAndCloseFW(fileWriter, logger, CLASS);
         } catch (IOException e) {
-            logger.info("Error in writeOnReportFiles when trying to create directory");
+            logger.info(ERROR);
         }
     }
 
     public static void printReleases(String project, List<Release> releaseList, String name) throws IOException {
         project = project.toLowerCase();
-        File file = new File("reportFiles/" + project);
+        File file = new File(MAINDIR + project);
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -116,7 +121,7 @@ public class ReportUtils {
             }
         }
 
-        file = new File("reportFiles/" + project + "/"+ name);
+        file = new File(MAINDIR + project + SLASH+ name);
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             for (Release release : releaseList) {
@@ -128,7 +133,7 @@ public class ReportUtils {
 
             flushAndCloseFW(fileWriter, logger, CLASS);
         } catch (IOException e) {
-            logger.info("Error in writeOnReportFiles when trying to create directory");
+            logger.info(ERROR);
         }
 
     }
@@ -145,7 +150,7 @@ public class ReportUtils {
 
     public static void printClasses(String project, List<JavaFile> classes) throws IOException {
         project = project.toLowerCase();
-        File file = new File("reportFiles/" + project);
+        File file = new File(MAINDIR + project);
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -153,7 +158,7 @@ public class ReportUtils {
             }
         }
 
-        file = new File("reportFiles/" + project+ "/Classes.txt");
+        file = new File(MAINDIR + project+ "/Classes.txt");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             for (JavaFile c: classes){
@@ -165,7 +170,7 @@ public class ReportUtils {
 
             flushAndCloseFW(fileWriter, logger, CLASS);
         } catch (IOException e) {
-            logger.info("Error in writeOnReportFiles when trying to create directory");
+            logger.info(ERROR);
         }
     }
 
