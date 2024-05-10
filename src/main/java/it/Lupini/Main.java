@@ -8,8 +8,8 @@ import java.net.URISyntaxException;
 
 public class Main {
     public static void main(String[] args) throws GitAPIException, IOException, URISyntaxException {
-        ExtractData.buildDataset("BOOKKEEPER", "https://github.com/martinalupini/bookkeeper.git");
-        ExtractData.buildDataset("AVRO", "https://github.com/martinalupini/avro.git");
+        ExtractData.buildDataset("BOOKKEEPER");
+        ExtractData.buildDataset("AVRO");
     }
 
 }

@@ -17,7 +17,7 @@ public class ExtractData {
 
     private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
 
-    public static void buildDataset(String project, String repoURL) throws IOException, URISyntaxException, GitAPIException {
+    public static void buildDataset(String project) throws IOException, URISyntaxException, GitAPIException {
 
         //This first part is related to the extraction of information from Git and Jira
         ExtractFromJira jiraExtractor = new ExtractFromJira(project.toUpperCase());
@@ -29,7 +29,7 @@ public class ExtractData {
         ReportUtils.printTickets(project, ticketList);
         logger.info(project+": tickets extracted.");
 
-        ExtractFromGit gitExtractor = new ExtractFromGit(project, repoURL, releaseList);
+        ExtractFromGit gitExtractor = new ExtractFromGit(project, releaseList);
         List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList);
         ReportUtils.printCommits(project, commitList, "AllCommits.txt");
         logger.info(project+": commits extracted.");

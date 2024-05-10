@@ -40,7 +40,7 @@ public class ExtractFromGit {
     private Repository repository;
 
 
-    public ExtractFromGit(String projName, String repoURL, List<Release> releaseList) throws IOException, GitAPIException {
+    public ExtractFromGit(String projName,  List<Release> releaseList) throws IOException, GitAPIException {
         InitCommand init = Git.init();
         File file = new File("C:/Users/Martina/ISW/"+projName.toLowerCase()+"/.git");
         init.setDirectory(file);
