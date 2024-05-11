@@ -1,6 +1,6 @@
 package it.lupini.utils;
 
-import it.lupini.model.JavaFile;
+import it.lupini.model.JavaClass;
 import it.lupini.model.Release;
 import it.lupini.model.Ticket;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -148,7 +148,7 @@ public class ReportUtils {
     }
 
 
-    public static void printClasses(String project, List<JavaFile> classes) throws IOException {
+    public static void printClasses(String project, List<JavaClass> classes) throws IOException {
         project = project.toLowerCase();
         File file = new File(MAINDIR + project);
         if (!file.exists()) {
@@ -161,7 +161,7 @@ public class ReportUtils {
         file = new File(MAINDIR + project+ "/Classes.txt");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
-            for (JavaFile c: classes){
+            for (JavaClass c: classes){
                 String commit;
                 if(c.getCommits().isEmpty())  commit = "";
                 else commit = c.getCommits().get(0).toString();

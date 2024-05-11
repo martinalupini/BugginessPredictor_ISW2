@@ -1,6 +1,6 @@
 package it.lupini.controller;
 
-import it.lupini.model.JavaFile;
+import it.lupini.model.JavaClass;
 import it.lupini.model.Release;
 import it.lupini.model.Ticket;
 import it.lupini.utils.ReleaseUtils;
@@ -56,14 +56,14 @@ public class ExtractData {
         logger.info(print);
 
         //extracting all the classes of the project
-        List<JavaFile> classes = gitExtractor.getClasses(releaseList);
+        List<JavaClass> classes = gitExtractor.getClasses(releaseList);
         ReportUtils.printClasses(project, classes);
         print = project+": classes extracted.";
         logger.info(print);
 
         //computing the metrics of the classes
         Metrics metrics = new Metrics(classes, gitExtractor);
-        List<JavaFile> classesWithMetrics = metrics.computeMetrics();
+        List<JavaClass> classesWithMetrics = metrics.computeMetrics();
         print = project+": metrics calculated.";
         logger.info(print);
 

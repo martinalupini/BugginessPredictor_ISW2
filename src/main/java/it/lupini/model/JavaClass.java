@@ -5,7 +5,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JavaFile {
+public class JavaClass {
     private String name;
     private String content;
     private Release release;   //release where the class is created
@@ -38,7 +38,7 @@ public class JavaFile {
 
 
 
-    public JavaFile(String name, Release release, String content) {
+    public JavaClass(String name, Release release, String content) {
 
         this.name = name;
         this.release = release;

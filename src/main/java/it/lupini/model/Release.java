@@ -14,7 +14,7 @@ public final class Release {
     //list of all commits related to that version
     private List<RevCommit> commitList;
     //list of all classes related to that version
-    private List <JavaFile> classes;
+    private List <JavaClass> classes;
 
     public Release(String releaseName, LocalDate releaseDate) {
         this.releaseName = releaseName;
@@ -48,15 +48,15 @@ public final class Release {
     }
 
 
-    public List<JavaFile> getClasses() {
+    public List<JavaClass> getClasses() {
         return classes;
     }
 
-    public void setClasses(List<JavaFile> classes) {
+    public void setClasses(List<JavaClass> classes) {
         this.classes = classes;
     }
 
-    public void addClass(JavaFile newClass){
+    public void addClass(JavaClass newClass){
         this.classes.add(newClass);
     }
 

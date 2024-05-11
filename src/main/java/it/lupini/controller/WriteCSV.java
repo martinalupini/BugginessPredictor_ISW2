@@ -1,6 +1,6 @@
 package it.lupini.controller;
 
-import it.lupini.model.JavaFile;
+import it.lupini.model.JavaClass;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -11,7 +11,7 @@ public class WriteCSV {
 
     private WriteCSV(){}
 
-    public static void createCSV(String project, List<JavaFile> classes) throws IOException {
+    public static void createCSV(String project, List<JavaClass> classes) throws IOException {
         project = project.toLowerCase();
         String buggy;
         File file = new File("csvFiles/" + project);
@@ -26,7 +26,7 @@ public class WriteCSV {
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             fileWriter.append("Name, Release, LOC, #Comments, #Revisions, #Auth, #Fix, LOC touched, LOC added, MAX LOC added, AVG LOC added, churn, MAX churn, AVG churn, Buggy").append("\n");
-            for (JavaFile c: classes){
+            for (JavaClass c: classes){
 
                 if(c.getBuggyness()){
                     buggy = "YES";

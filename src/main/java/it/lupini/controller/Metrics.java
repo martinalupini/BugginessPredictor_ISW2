@@ -1,6 +1,6 @@
 package it.lupini.controller;
 
-import it.lupini.model.JavaFile;
+import it.lupini.model.JavaClass;
 import it.lupini.utils.MathUtils;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -10,17 +10,17 @@ import java.util.List;
 
 public class Metrics {
 
-    private final List<JavaFile> classes;
+    private final List<JavaClass> classes;
 
     private final ExtractFromGit gitExtractor;
 
-    public Metrics(List<JavaFile> classes, ExtractFromGit gitExtractor){
+    public Metrics(List<JavaClass> classes, ExtractFromGit gitExtractor){
         this.classes = classes;
         this.gitExtractor = gitExtractor;
 
     }
 
-    public List<JavaFile> computeMetrics() throws IOException {
+    public List<JavaClass> computeMetrics() throws IOException {
         countLoc();
         countComments();
         computeNR();
@@ -33,7 +33,7 @@ public class Metrics {
     }
 
     private void countLoc() {
-        for(JavaFile projectClass : classes) {
+        for(JavaClass projectClass : classes) {
             String[] lines = projectClass.getContent().split("\r\n|\r|\n");
             projectClass.setLoc(lines.length);
         }
@@ -42,7 +42,7 @@ public class Metrics {
 
     public void countComments() {
 
-        for(JavaFile projectClass : classes) {
+        for(JavaClass projectClass : classes) {
             int commentCount = 0;
             String[] lines = projectClass.getContent().split("\r\n|\r|\n");
             String trim;
@@ -65,21 +65,21 @@ public class Metrics {
 
 
     private void computeNR() {
-        for(JavaFile projectClass : classes) {
+        for(JavaClass projectClass : classes) {
             projectClass.setNRevisions(projectClass.getCommits().size());
         }
     }
 
 
     private void computeNFix(){
-        for(JavaFile projectClass : classes) {
+        for(JavaClass projectClass : classes) {
             projectClass.setNFix(projectClass.getFixCommits().size());
         }
     }
 
 
     private void computeNAuth() {
-        for(JavaFile projectClass : classes) {
+        for(JavaClass projectClass : classes) {
             List<String> authorsOfClass = new ArrayList<>();
             for(RevCommit commit : projectClass.getCommits()) {
                 if(!authorsOfClass.contains(commit.getAuthorIdent().getName())) {
@@ -93,7 +93,7 @@ public class Metrics {
 
     private void computeLOCMetrics() throws IOException {
         int i;
-        for(JavaFile projectClass : classes) {
+        for(JavaClass projectClass : classes) {
 
             gitExtractor.extractAddedOrRemovedLOC(projectClass);
 

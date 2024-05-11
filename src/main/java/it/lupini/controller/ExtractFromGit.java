@@ -1,6 +1,6 @@
 package it.lupini.controller;
 
-import it.lupini.model.JavaFile;
+import it.lupini.model.JavaClass;
 import it.lupini.model.Release;
 import it.lupini.model.Ticket;
 import it.lupini.utils.ReleaseUtils;
@@ -130,9 +130,9 @@ public class ExtractFromGit {
         return filteredCommits;
     }
 
-    public List<JavaFile> getClasses(List<Release> releasesList) throws IOException {
+    public List<JavaClass> getClasses(List<Release> releasesList) throws IOException {
 
-        List<JavaFile> classes = new ArrayList<>();
+        List<JavaClass> classes = new ArrayList<>();
 
         for (Release release : releasesList) {
             List<String> classesList = new ArrayList<>();
@@ -160,7 +160,7 @@ public class ExtractFromGit {
                         loader.copyTo(output);
                         String fileContent = output.toString();
 
-                        JavaFile file = new JavaFile(filename, release, fileContent );
+                        JavaClass file = new JavaClass(filename, release, fileContent );
                         classesList.add(filename);
                         release.addClass(file);
                         classes.add(file);
@@ -187,10 +187,10 @@ public class ExtractFromGit {
     }
 
 
-    public void setBuggyness(List<Ticket> ticketList, List<JavaFile> allProjectClasses) throws IOException {
+    public void setBuggyness(List<Ticket> ticketList, List<JavaClass> allProjectClasses) throws IOException {
 
         //at first the buggyness is set to false
-        for(JavaFile projectClass: allProjectClasses){
+        for(JavaClass projectClass: allProjectClasses){
             projectClass.setBuggyness(false);
         }
 
@@ -217,13 +217,13 @@ public class ExtractFromGit {
     }
 
 
-    public void addCommitsToClass(List<JavaFile> classes, List<RevCommit> commits) throws IOException {
+    public void addCommitsToClass(List<JavaClass> classes, List<RevCommit> commits) throws IOException {
 
         for(RevCommit commit: commits){
             Release releaseOfCommit = ReleaseUtils.getReleaseOfCommit(commit, fullReleaseList);
             List<String> modifiedClassesNames = getTouchedClassesNames(commit);
             for(String modifiedClass: modifiedClassesNames){
-                for(JavaFile projectClass: classes){
+                for(JavaClass projectClass: classes){
                     if(projectClass.getRelease().equals(releaseOfCommit) && projectClass.getName().equals(modifiedClass) && !projectClass.getCommits().contains(commit)) {
                         projectClass.addCommit(commit);
                     }
@@ -233,8 +233,8 @@ public class ExtractFromGit {
     }
 
 
-    private static void labelBuggyClasses(String modifiedClass, Release injectedVersion, Release fixedVersion, List<JavaFile> allProjectClasses, RevCommit commit) {
-        for(JavaFile projectClass: allProjectClasses){
+    private static void labelBuggyClasses(String modifiedClass, Release injectedVersion, Release fixedVersion, List<JavaClass> allProjectClasses, RevCommit commit) {
+        for(JavaClass projectClass: allProjectClasses){
             if(projectClass.getCommits().contains(commit) && !projectClass.getFixCommits().contains(commit)){
                 projectClass.addFixCommit(commit);
             }
@@ -270,7 +270,7 @@ public class ExtractFromGit {
     }
 
 
-    public void extractAddedOrRemovedLOC(JavaFile projectClass) throws IOException {
+    public void extractAddedOrRemovedLOC(JavaClass projectClass) throws IOException {
         for(RevCommit commit : projectClass.getCommits()) {
             try(DiffFormatter diffFormatter = new DiffFormatter(DisabledOutputStream.INSTANCE)) {
                 //getting the parent of the current commit
