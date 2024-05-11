@@ -1,6 +1,7 @@
 package it.lupini.controller;
 
 import it.lupini.model.JavaFile;
+import it.lupini.utils.MathUtils;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.IOException;
@@ -38,36 +39,29 @@ public class Metrics {
         }
     }
 
+
     public void countComments() {
 
         for(JavaFile projectClass : classes) {
-            int i = 0;
             int commentCount = 0;
             String[] lines = projectClass.getContent().split("\r\n|\r|\n");
+            String trim;
 
-            while(i<lines.length) {
-                //single-lined comments
-                if (lines[i].trim().startsWith("//")) {
-                    commentCount++;
-                    i++;
-                    continue;
-                    //multi-lined comments
-                } else if (lines[i].trim().startsWith("/*")) {
-                    commentCount++;
-                    i++;
-                    while (i<lines.length && !lines[i].trim().startsWith("*/")) {
-                        commentCount++;
-                        i++;
-                    }
+            for (String line : lines) {
 
-                    continue;
+                trim = line.trim();
+
+                if (trim.startsWith("//") || trim.startsWith("*") || trim.startsWith("/*") || trim.startsWith("*/")) {
+                    commentCount++;
                 }
-                i++;
+
             }
 
             projectClass.setCommentLines(commentCount);
         }
     }
+
+
 
 
     private void computeNR() {
@@ -120,36 +114,12 @@ public class Metrics {
 
             }
 
-            projectClass.setMaxLocAdded(getMaxVal(locAddedByClass));
-            projectClass.setMaxChurn(getMaxVal(churnOfClass));
-            projectClass.setAvgLOCAdded(getAvgVal(locAddedByClass));
-            projectClass.setAvgChurn(getAvgVal(churnOfClass));
+            projectClass.setMaxLocAdded(MathUtils.getMaxVal(locAddedByClass));
+            projectClass.setMaxChurn(MathUtils.getMaxVal(churnOfClass));
+            projectClass.setAvgLOCAdded(MathUtils.getAvgVal(locAddedByClass));
+            projectClass.setAvgChurn(MathUtils.getAvgVal(churnOfClass));
 
         }
-    }
-
-    private int getMaxVal(List<Integer> list) {
-        int i;
-        if(list.isEmpty() ) return 0;
-        int max = list.get(0);
-        for (i = 1; i < list.size(); i++) {
-            if (max < list.get(i)) max = list.get(i);
-        }
-
-        return max;
-
-    }
-
-    private int getAvgVal(List<Integer> list){
-        int sum = 0;
-
-        if(list.isEmpty() ) return 0;
-
-        for(Integer v : list){
-            sum += v;
-        }
-        return sum/ list.size();
-
     }
 
 

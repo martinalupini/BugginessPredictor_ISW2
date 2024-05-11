@@ -2,12 +2,12 @@ package it.lupini.controller;
 
 import it.lupini.model.Release;
 import it.lupini.model.Ticket;
+import it.lupini.utils.MathUtils;
 import it.lupini.utils.TicketUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.lang.Math.max;
@@ -90,7 +90,9 @@ public class Proportion {
 
         }
 
-        return median(proportionListTemp);
+        float median = MathUtils.median(proportionListTemp);
+
+        return median;
 
 
     }
@@ -128,18 +130,4 @@ public class Proportion {
 
     }
 
-    private float median(List<Float> array){
-        float median;
-
-        Collections.sort(array);
-
-        int size = array.size();
-        if (size % 2 == 0) {
-            median = (array.get((size / 2) - 1) + array.get(size / 2)) / 2;
-        } else {
-            median = array.get(size / 2);
-        }
-
-        return median;
-    }
 }
