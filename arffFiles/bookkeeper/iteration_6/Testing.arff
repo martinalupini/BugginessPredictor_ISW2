@@ -1,0 +1,17 @@
+@relation bookkeeper_Testing_6
+
+@attribute LOC numeric
+@attribute num_comments numeric
+@attribute num_revisions numeric
+@attribute num_auth numeric
+@attribute num_fix numeric
+@attribute LOC_touched numeric
+@attribute LOC_added numeric
+@attribute MAX_LOC_added numeric
+@attribute AVG_LOC_added numeric
+@attribute churn numeric
+@attribute MAX_churn numeric
+@attribute AVG_churn numeric
+@attribute buggy {'YES', 'NO'}
+
+@data

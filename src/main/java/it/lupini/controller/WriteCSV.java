@@ -35,7 +35,7 @@ public class WriteCSV {
                 }
 
                 fileWriter.append(c.getName()).append(",")
-                        .append(c.getRelease().releaseName()).append(",")
+                        .append(String.valueOf(c.getRelease().id())).append(",")
                         .append(String.valueOf(c.getLoc())).append(",")
                         .append(String.valueOf(c.getCommentLines())).append(",")
                         .append(String.valueOf(c.getNRevisions())).append(",")

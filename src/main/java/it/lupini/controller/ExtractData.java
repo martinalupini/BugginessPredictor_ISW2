@@ -67,8 +67,15 @@ public class ExtractData {
         print = project+": metrics calculated.";
         logger.info(print);
 
+        //writing on csv and arff files
         WriteCSV.createCSV(project, classesWithMetrics);
         ReportUtils.printSummary(project, ticketList, commitList, filteredCommitsOfIssues);
+        print = project+": CSV files created.";
+        logger.info(print);
+
+        WriteArff.createArff(project, classes, releaseList);
+        print = project+": Arff files created.";
+        logger.info(print);
 
     }
 }

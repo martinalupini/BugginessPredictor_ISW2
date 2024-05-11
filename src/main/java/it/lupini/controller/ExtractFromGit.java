@@ -177,8 +177,9 @@ public class ExtractFromGit {
             }
         }
 
-        // checking on all commits???
+        // checking on all commits (of all the releases)
         addCommitsToClass(classes, commitList);
+        //checking on all tickets
         setBuggyness(ticketList, classes);
 
 
