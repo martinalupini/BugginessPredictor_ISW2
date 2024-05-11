@@ -172,10 +172,6 @@ public class JavaFile {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public Release getRelease() {
         return release;
     }
@@ -196,7 +192,6 @@ public class JavaFile {
         return locRemovedList;
     }
 
-
     public void addLocAdded(int loc){
         this.locAddedList.add(loc);
     }
@@ -210,7 +205,6 @@ public class JavaFile {
     }
 
     public void sumChurn(int churn){ this.churn += churn;}
-
 
     public List<RevCommit> getFixCommits() {
         return fixCommits;

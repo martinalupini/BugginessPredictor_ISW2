@@ -64,10 +64,6 @@ public final class Release {
         return commitList;
     }
 
-    public void setCommitList(List<RevCommit> commitList) {
-        this.commitList = commitList;
-    }
-
     public void addCommit(RevCommit commit){
         this.commitList.add(commit);
     }

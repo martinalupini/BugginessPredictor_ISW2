@@ -17,7 +17,6 @@ public class Proportion {
     private List<Float> proportionList;
 
     private float totalProportion;
-    private float coldStartProportion;
 
     private float pColdStart;
 
@@ -31,7 +30,6 @@ public class Proportion {
 
     public Proportion(){
         this.proportionList = new ArrayList<>();
-        this.coldStartProportion = 0;
         this.totalProportion = 0;
         this.pColdStart = 0;
     }
@@ -90,9 +88,7 @@ public class Proportion {
 
         }
 
-        float median = MathUtils.median(proportionListTemp);
-
-        return median;
+        return MathUtils.median(proportionListTemp);
 
 
     }
