@@ -66,9 +66,7 @@ public class WriteArff {
 
             for (JavaClass c: classes){
 
-                if(type.equals("Testing")){
-                    buggy = "NO";
-                }else if(c.getBuggyness()){
+               if(c.getBuggyness()){
                     buggy = "YES";
                 }else{
                     buggy = "NO";

@@ -1,15 +1,13 @@
 package it.lupini.controller;
 
+import it.lupini.model.ClassifierEvaluation;
 import it.lupini.model.JavaClass;
 import it.lupini.model.Release;
 import it.lupini.model.Ticket;
 import it.lupini.utils.ReleaseUtils;
 import it.lupini.utils.ReportUtils;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,7 +17,7 @@ public class ExtractData {
 
     private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
 
-    public static void buildDataset(String project) throws IOException, URISyntaxException, GitAPIException {
+    public static void buildDataset(String project) throws Exception {
         String print;
 
         //This first part is related to the extraction of information from Git and Jira
@@ -68,7 +66,7 @@ public class ExtractData {
         logger.info(print);
 
         //writing on csv and arff files
-        WriteCSV.createCSV(project, classesWithMetrics);
+        WriteCSV.writeDataset(project, classesWithMetrics);
         ReportUtils.printSummary(project, ticketList, commitList, filteredCommitsOfIssues);
         print = project+": CSV files created.";
         logger.info(print);
@@ -76,6 +74,11 @@ public class ExtractData {
         WriteArff.createArff(project, classes, releaseList);
         print = project+": Arff files created.";
         logger.info(print);
+
+
+        ClassifyWithWeka classify = new ClassifyWithWeka(project.toLowerCase(), releaseList.size());
+        List<ClassifierEvaluation> evaluations = classify.evaluateClassifiers();
+        WriteCSV.writeFinalWekaResults(project, evaluations);
 
     }
 }

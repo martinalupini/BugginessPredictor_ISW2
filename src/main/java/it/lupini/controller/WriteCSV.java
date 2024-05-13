@@ -1,5 +1,6 @@
 package it.lupini.controller;
 
+import it.lupini.model.ClassifierEvaluation;
 import it.lupini.model.JavaClass;
 
 import java.io.File;
@@ -11,7 +12,7 @@ public class WriteCSV {
 
     private WriteCSV(){}
 
-    public static void createCSV(String project, List<JavaClass> classes) throws IOException {
+    public static void writeDataset(String project, List<JavaClass> classes) throws IOException {
         project = project.toLowerCase();
         String buggy;
         File file = new File("csvFiles/" + project);
@@ -49,6 +50,46 @@ public class WriteCSV {
                         .append(String.valueOf(c.getMAXChurn())).append(",")
                         .append(String.valueOf(c.getAVGChurn())).append(",")
                         .append(buggy).append("\n");
+            }
+
+            fileWriter.flush();
+        } catch (IOException e) {
+            //ignore
+        }
+    }
+
+
+    public static void writeFinalWekaResults(String project, List<ClassifierEvaluation> evaluations) throws IOException {
+        project = project.toLowerCase();
+        File file = new File("finalWekaResults/" + project);
+        if (!file.exists()) {
+            boolean created = file.mkdirs();
+            if (!created) {
+                throw new IOException();
+            }
+        }
+
+
+        file = new File("finalWekaResults/" + project+ "/results.csv");
+        try(FileWriter fileWriter = new FileWriter(file)) {
+
+            fileWriter.append("Iteration,%TrainingInstances,Classifier,Feature Selection,Sampling,Cost Sensitive,Precision,Recall,AUC,Kappa,TP,FP,TN,FN").append("\n");
+            for (ClassifierEvaluation e: evaluations){
+
+                fileWriter.append(String.valueOf(e.getIteration())).append(",")
+                        .append(String.valueOf(e.getTrainingPercent())).append(",")
+                        .append(e.getClassifierName()).append(",")
+                        .append(e.getFeatureSelection()).append(",")
+                        .append(e.getSampling()).append(",")
+                        .append(e.getCostSensitive()).append(",")
+                        .append(String.valueOf(e.getPrecision())).append(",")
+                        .append(String.valueOf(e.getRecall())).append(",")
+                        .append(String.valueOf(e.getAUC())).append(",")
+                        .append(String.valueOf(e.getKappa())).append(",")
+                        .append(String.valueOf(e.getTP())).append(",")
+                        .append(String.valueOf(e.getFP())).append(",")
+                        .append(String.valueOf(e.getTN())).append(",")
+                        .append(String.valueOf(e.getFN())).append("\n");
             }
 
             fileWriter.flush();
