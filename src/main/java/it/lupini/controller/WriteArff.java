@@ -17,7 +17,7 @@ public class WriteArff {
         project = project.toLowerCase();
         int iteration = 1;
 
-        while(iteration< halfReleases.size()+1){
+        while(iteration< halfReleases.size()){
             List<JavaClass> tempTraining = new ArrayList<>(classes);
             List<JavaClass> tempTesting = new ArrayList<>(classes);
             final int finalIteration = iteration;

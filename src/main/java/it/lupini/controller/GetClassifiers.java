@@ -249,10 +249,19 @@ public class GetClassifiers {
         List<WekaFilter> filters = new ArrayList<>();
 
         //Best first (forward search)
-        AttributeSelection forward = new AttributeSelection();
+        /*AttributeSelection forward = new AttributeSelection();
         BestFirst bestFirst = new BestFirst();
         bestFirst.setDirection(new SelectedTag(2, bestFirst.getDirection().getTags()));
         forward.setSearch(bestFirst);
+
+         */
+
+        AttributeSelection forward = new AttributeSelection();
+        CfsSubsetEval evaluator1 = new CfsSubsetEval();
+        GreedyStepwise search1 = new GreedyStepwise();
+        search1.setSearchBackwards(false);
+        forward.setEvaluator(evaluator1);
+        forward.setSearch(search1);
 
 
         //Backward search
@@ -264,8 +273,8 @@ public class GetClassifiers {
         backward.setSearch(search);
 
 
-        filters.add(new WekaFilter(forward, forward.getSearch().getClass().getSimpleName(), "none", "none"));
-        filters.add(new WekaFilter(backward, backward.getSearch().getClass().getSimpleName(), "none", "none"));
+        filters.add(new WekaFilter(forward, forward.getSearch().getClass().getSimpleName()+"(forward)", "none", "none"));
+        filters.add(new WekaFilter(backward, backward.getSearch().getClass().getSimpleName()+"(backward)", "none", "none"));
 
         return filters;
 
