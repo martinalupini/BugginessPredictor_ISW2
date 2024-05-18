@@ -3,8 +3,6 @@ package it.lupini.controller;
 import it.lupini.model.WekaClassifier;
 import it.lupini.model.WekaFilter;
 import weka.attributeSelection.BestFirst;
-import weka.attributeSelection.CfsSubsetEval;
-import weka.attributeSelection.GreedyStepwise;
 import weka.classifiers.Classifier;
 import weka.classifiers.CostMatrix;
 import weka.classifiers.bayes.NaiveBayes;
@@ -249,12 +247,18 @@ public class GetClassifiers {
         List<WekaFilter> filters = new ArrayList<>();
 
         //Best first (forward search)
-        /*AttributeSelection forward = new AttributeSelection();
+        AttributeSelection forward = new AttributeSelection();
         BestFirst bestFirst = new BestFirst();
-        bestFirst.setDirection(new SelectedTag(2, bestFirst.getDirection().getTags()));
+        bestFirst.setDirection(new SelectedTag(1, bestFirst.getDirection().getTags()));
         forward.setSearch(bestFirst);
 
-         */
+
+        AttributeSelection backward = new AttributeSelection();
+        BestFirst first = new BestFirst();
+        first.setDirection(new SelectedTag(0, first.getDirection().getTags()));
+        forward.setSearch(first);
+
+         /*
 
         AttributeSelection forward = new AttributeSelection();
         CfsSubsetEval evaluator1 = new CfsSubsetEval();
@@ -263,14 +267,19 @@ public class GetClassifiers {
         forward.setEvaluator(evaluator1);
         forward.setSearch(search1);
 
+          */
+
 
         //Backward search
+        /*
         AttributeSelection backward = new AttributeSelection();
         CfsSubsetEval evaluator = new CfsSubsetEval();
         GreedyStepwise search = new GreedyStepwise();
         search.setSearchBackwards(true);
         backward.setEvaluator(evaluator);
         backward.setSearch(search);
+
+         */
 
 
         filters.add(new WekaFilter(forward, forward.getSearch().getClass().getSimpleName()+"(forward)", "none", "none"));
@@ -286,9 +295,9 @@ public class GetClassifiers {
 
         costSensitiveClassifier.setMinimizeExpectedCost(false);
         costMatrix.setCell(0,0,0.0);
-        costMatrix.setCell(1,1,0.0);
-        costMatrix.setCell(0,1, 1.0);
-        costMatrix.setCell(1,0, 10.0);
+        costMatrix.setCell(1,0,1.0);
+        costMatrix.setCell(0,1, 10.0);
+        costMatrix.setCell(1,1, 0.0);
 
         costSensitiveClassifier.setCostMatrix(costMatrix);
 

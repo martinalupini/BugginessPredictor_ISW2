@@ -1,42 +1,20 @@
 package it.lupini.controller;
 
 import it.lupini.model.JavaClass;
-import it.lupini.model.Release;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class WriteArff {
 
     private WriteArff(){}
 
-    public static void createArff(String project, List<JavaClass> classes, List<Release> halfReleases) throws IOException {
+    public static void createArff(String project, List<JavaClass> classes, int iteration, String type) throws IOException {
         project = project.toLowerCase();
-        int iteration = 1;
-
-        while(iteration< halfReleases.size()){
-            List<JavaClass> tempTraining = new ArrayList<>(classes);
-            List<JavaClass> tempTesting = new ArrayList<>(classes);
-            final int finalIteration = iteration;
-
-            tempTraining.removeIf(javaClass -> javaClass.getRelease().id()>finalIteration);
-            tempTesting.removeIf(javaClass -> javaClass.getRelease().id()!=finalIteration+1);
-
-            createFile(project, tempTraining, iteration, "Training");
-            createFile(project, tempTesting, iteration, "Testing");
-
-            iteration++;
-
-        }
-
-    }
-
-    private static void createFile(String project, List<JavaClass> classes, int iteration, String type) throws IOException {
         String buggy;
-        File file = new File("arffFiles/" + project+ "/iteration_" + iteration );
+        File file = new File("arffFiles/" + project + "/iteration_" + iteration);
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -44,10 +22,10 @@ public class WriteArff {
             }
         }
 
-        file = new File("arffFiles/" + project+ "/iteration_" + iteration +"/"+type+".arff");
-        try(FileWriter fileWriter = new FileWriter(file)) {
+        file = new File("arffFiles/" + project + "/iteration_" + iteration + "/" + type + ".arff");
+        try (FileWriter fileWriter = new FileWriter(file)) {
 
-            fileWriter.append("@relation "+ project+"_"+type+"_"+iteration).append("\n\n")
+            fileWriter.append("@relation " + project + "_" + type + "_" + iteration).append("\n\n")
                     .append("@attribute LOC numeric").append("\n")
                     .append("@attribute num_comments numeric").append("\n")
                     .append("@attribute num_revisions numeric").append("\n")
@@ -64,11 +42,11 @@ public class WriteArff {
                     .append("@data").append("\n");
 
 
-            for (JavaClass c: classes){
+            for (JavaClass c : classes) {
 
-               if(c.getBuggyness()){
+                if (c.getBuggyness()) {
                     buggy = "YES";
-                }else{
+                } else {
                     buggy = "NO";
                 }
 

@@ -12,10 +12,10 @@ public class WriteCSV {
 
     private WriteCSV(){}
 
-    public static void writeDataset(String project, List<JavaClass> classes) throws IOException {
+    public static void writeDataset(String project, List<JavaClass> classes, int iteration, String type) throws IOException {
         project = project.toLowerCase();
         String buggy;
-        File file = new File("csvFiles/" + project);
+        File file = new File("csvFiles/" + project+ "/iteration_" + iteration );
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -23,7 +23,7 @@ public class WriteCSV {
             }
         }
 
-        file = new File("csvFiles/" + project+ "/Dataset.csv");
+        file = new File("csvFiles/" + project+ "/iteration_"+iteration+"/"+type+".csv");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
             fileWriter.append("Name, Release, LOC, #Comments, #Revisions, #Auth, #Fix, LOC touched, LOC added, MAX LOC added, AVG LOC added, churn, MAX churn, AVG churn, Buggy").append("\n");

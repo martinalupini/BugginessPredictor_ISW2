@@ -1,6 +1,5 @@
 package it.lupini.controller;
 
-import it.lupini.model.ClassifierEvaluation;
 import it.lupini.model.JavaClass;
 import it.lupini.model.Release;
 import it.lupini.model.Ticket;
@@ -12,6 +11,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class ExtractData {
+
+    private static int fromRelease = 3;
+    private static int toRelease;
 
     private ExtractData(){}
 
@@ -33,23 +35,25 @@ public class ExtractData {
 
         ExtractFromGit gitExtractor = new ExtractFromGit(project, releaseList);
         List<RevCommit> commitList = gitExtractor.getAllCommits(releaseList);
-        ReportUtils.printCommits(project, commitList, "AllCommits.txt");
+        ReportUtils.printCommits(project, commitList, "AllCommits.csv");
         print = project+": commits extracted.";
         logger.info(print);
 
         List<RevCommit> filteredCommitsOfIssues = gitExtractor.filterCommitsOfIssues(commitList, ticketList);
         //need to update the ticket list
         ticketList = gitExtractor.getTicketList();
-        ReportUtils.printCommits(project, filteredCommitsOfIssues, "FilteredCommits.txt");
+        ReportUtils.printCommits(project, filteredCommitsOfIssues, "FilteredCommits.csv");
+        ReportUtils.printSummary(project, ticketList, commitList, filteredCommitsOfIssues);
+        ReportUtils.printReleases(project, releaseList, "AllReleases.csv");
         print = project+": commits filtered.";
         logger.info(print);
 
-        ReportUtils.printReleases(project, releaseList, "AllReleases.txt");
 
         //removing half of the releases before extracting the classes
+        toRelease = (int) Math.floor(releaseList.size() / 2);
         releaseList =  ReleaseUtils.removeHalfReleases(releaseList);
         gitExtractor.setReleaseList(releaseList);
-        ReportUtils.printReleases(project, releaseList, "HalfReleases.txt");
+        ReportUtils.printReleases(project, releaseList, "HalfReleases.csv");
         print = project+": removed half releases.";
         logger.info(print);
 
@@ -60,25 +64,22 @@ public class ExtractData {
         logger.info(print);
 
         //computing the metrics of the classes
-        Metrics metrics = new Metrics(classes, gitExtractor);
+        Metrics metrics = new Metrics(project,classes, gitExtractor);
         List<JavaClass> classesWithMetrics = metrics.computeMetrics();
         print = project+": metrics calculated.";
         logger.info(print);
 
-        //writing on csv and arff files
-        WriteCSV.writeDataset(project, classesWithMetrics);
-        ReportUtils.printSummary(project, ticketList, commitList, filteredCommitsOfIssues);
-        print = project+": CSV files created.";
+        //labeling buggyness preserving time order and creating files
+        metrics.addBuggynessAndCreateFiles(classesWithMetrics, ticketList, fromRelease, toRelease);
+        print = project+": csv and arff files created.";
         logger.info(print);
 
-        WriteArff.createArff(project, classes, releaseList);
-        print = project+": Arff files created.";
-        logger.info(print);
-
-
+        /*
         ClassifyWithWeka classify = new ClassifyWithWeka(project.toLowerCase(), releaseList.size()-1);
         List<ClassifierEvaluation> evaluations = classify.evaluateClassifiers();
         WriteCSV.writeFinalWekaResults(project, evaluations);
+
+         */
 
     }
 }

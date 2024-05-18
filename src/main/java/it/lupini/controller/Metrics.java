@@ -1,6 +1,7 @@
 package it.lupini.controller;
 
 import it.lupini.model.JavaClass;
+import it.lupini.model.Ticket;
 import it.lupini.utils.MathUtils;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -14,9 +15,12 @@ public class Metrics {
 
     private final ExtractFromGit gitExtractor;
 
-    public Metrics(List<JavaClass> classes, ExtractFromGit gitExtractor){
+    private final String project;
+
+    public Metrics(String project, List<JavaClass> classes, ExtractFromGit gitExtractor){
         this.classes = classes;
         this.gitExtractor = gitExtractor;
+        this.project = project;
 
     }
 
@@ -24,7 +28,7 @@ public class Metrics {
         countLoc();
         countComments();
         computeNR();
-        computeNFix();
+        //computeNFix();
         computeNAuth();
         computeLOCMetrics();
 
@@ -71,7 +75,7 @@ public class Metrics {
     }
 
 
-    private void computeNFix(){
+    private void computeNFix(List<JavaClass> classes) {
         for(JavaClass projectClass : classes) {
             projectClass.setNFix(projectClass.getFixCommits().size());
         }
@@ -120,6 +124,48 @@ public class Metrics {
             projectClass.setAvgChurn(MathUtils.getAvgVal(churnOfClass));
 
         }
+    }
+
+
+    public void addBuggynessAndCreateFiles(List<JavaClass> allClasses, List<Ticket> allTickets, int fromRelease, int toRelease) throws IOException {
+        int iteration = 1;
+
+        for(int i=fromRelease; i<= toRelease; i++){
+
+            final int testRelease = i;
+
+            //getting the training set
+            List<JavaClass> trainingClasses = new ArrayList<>(allClasses);
+            trainingClasses.removeIf(javaClass -> javaClass.getRelease().id()>=testRelease);
+
+            //getting the tickets before the testing release
+            List<Ticket> ticketList = new ArrayList<>(allTickets);
+            ticketList.removeIf(ticket -> ticket.getOv().id()>=testRelease);
+
+            //getting the testing set
+            List<JavaClass> testingClasses = new ArrayList<>(allClasses);
+            testingClasses.removeIf(javaClass -> javaClass.getRelease().id() != testRelease);
+
+            //labelling buggyness for the testing set
+            gitExtractor.setBuggyness(ticketList,trainingClasses);
+            computeNFix(testingClasses);
+
+            //labelling buggyness for the training set
+            gitExtractor.setBuggyness(allTickets, testingClasses);
+            computeNFix(testingClasses);
+
+
+            //creating the csv files
+            WriteCSV.writeDataset(project, trainingClasses, iteration, "Training");
+            WriteCSV.writeDataset(project, testingClasses, iteration, "Testing");
+
+            WriteArff.createArff(project, trainingClasses, iteration, "Training");
+            WriteArff.createArff(project, testingClasses, iteration, "Testing");
+
+            iteration++;
+
+        }
+
     }
 
 

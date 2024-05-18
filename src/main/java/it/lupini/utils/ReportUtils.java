@@ -19,7 +19,7 @@ public class ReportUtils {
 
     private ReportUtils(){}
 
-    public static final String DELIMITER = "\n------------------------------------------------------------------------------------------------\n";
+    public static final String DELIMITER = "\n";
     public static final String CLASS = ReportUtils.class.getName();
     private static final Logger logger = Logger.getLogger(CLASS);
     private static final String MAINDIR = "reportFiles/";
@@ -62,11 +62,12 @@ public class ReportUtils {
         file = new File(MAINDIR + project+ SLASH + name);
         try(FileWriter fileWriter = new FileWriter(file)) {
 
+            fileWriter.append("id,committer,creationDate\n");
             for (RevCommit commit: commitList){
-                fileWriter.append("id= ").append(commit.getName())
-                        .append(", committer= ").append(commit.getCommitterIdent().getName())
+                fileWriter.append(commit.getName()).append(",")
+                        .append(commit.getCommitterIdent().getName()).append(",")
                         //.append(", message= ").append(commit.getFullMessage())
-                        .append(", creationDate= ").append(String.valueOf(LocalDate.parse((new SimpleDateFormat("yyyy-MM-dd").format(commit.getCommitterIdent().getWhen()))))).append(DELIMITER);
+                        .append(String.valueOf(LocalDate.parse((new SimpleDateFormat("yyyy-MM-dd").format(commit.getCommitterIdent().getWhen()))))).append(DELIMITER);
             }
 
             flushAndCloseFW(fileWriter, logger, CLASS);
@@ -85,8 +86,10 @@ public class ReportUtils {
             }
         }
 
-        file = new File(MAINDIR + project+ SLASH+ "AllTickets.txt");
+        file = new File(MAINDIR + project+ SLASH+ "AllTickets.csv");
         try(FileWriter fileWriter = new FileWriter(file)) {
+
+            fileWriter.append("key,creationDate,resolutionDate,injectedVersion,openingVersion,fixedVersion,affectedVersion,numOfCommits\n");
 
             List<Ticket> ticketOrderedByCreation = new ArrayList<>(ticketList);
             ticketOrderedByCreation.sort(Comparator.comparing(Ticket::getCreationDate));
@@ -95,14 +98,14 @@ public class ReportUtils {
                 for(Release release : ticket.getAv()) {
                     iDs.add(release.releaseName());
                 }
-                fileWriter.append("key= ").append(ticket.getTicketKey())
-                        .append(", injectedVersion= ") .append(ticket.getIv().releaseName())
-                        .append(", openingVersion= ").append(ticket.getOv().releaseName())
-                        .append(", fixedVersion= ") .append(ticket.getFv().releaseName())
-                        .append(", affectedVersions= ").append(String.valueOf(iDs))
-                        .append(", numOfCommits= ").append(String.valueOf(ticket.getCommitList().size()))
-                        .append(", creationDate= ").append(String.valueOf(ticket.getCreationDate()))
-                        .append(", resolutionDate= ").append(String.valueOf(ticket.getResolutionDate())).append(DELIMITER);
+                fileWriter.append(ticket.getTicketKey()).append(",")
+                        .append(String.valueOf(ticket.getCreationDate())).append(",")
+                        .append(String.valueOf(ticket.getResolutionDate())).append(",")
+                        .append(ticket.getIv().releaseName()).append(",")
+                        .append(ticket.getOv().releaseName()).append(",")
+                        .append(ticket.getFv().releaseName()).append(",")
+                        .append(String.valueOf(iDs)).append(",")
+                        .append(String.valueOf(ticket.getCommitList().size())).append(DELIMITER);
             }
 
             flushAndCloseFW(fileWriter, logger, CLASS);
@@ -124,11 +127,13 @@ public class ReportUtils {
         file = new File(MAINDIR + project + SLASH+ name);
         try(FileWriter fileWriter = new FileWriter(file)) {
 
+            fileWriter.append("id,releaseName,releaseDate,numOfCommits\n");
+
             for (Release release : releaseList) {
-                fileWriter.append("id= ").append(String.valueOf(release.id()))
-                        .append(", releaseName= ").append(release.releaseName())
-                        .append(", releaseDate= ").append(String.valueOf(release.releaseDate()))
-                        .append(", numOfCommits= ").append(String.valueOf(release.getCommitList().size())).append(DELIMITER);
+                fileWriter.append(String.valueOf(release.id())).append(",")
+                        .append(release.releaseName()).append(",")
+                        .append(String.valueOf(release.releaseDate())).append(",")
+                        .append(String.valueOf(release.getCommitList().size())).append(DELIMITER);
             }
 
             flushAndCloseFW(fileWriter, logger, CLASS);
@@ -158,14 +163,18 @@ public class ReportUtils {
             }
         }
 
-        file = new File(MAINDIR + project+ "/Classes.txt");
+        file = new File(MAINDIR + project+ "/Classes.csv");
         try(FileWriter fileWriter = new FileWriter(file)) {
+
+            fileWriter.append("name,firstCommit,#Commits\n");
 
             for (JavaClass c: classes){
                 String commit;
                 if(c.getCommits().isEmpty())  commit = "";
                 else commit = c.getCommits().get(0).toString();
-                fileWriter.append("NAME: ").append(c.getName()).append(" FIRST COMMIT: ").append(commit).append(" #COMMITS: ").append(String.valueOf(c.getCommits().size())).append(DELIMITER);
+                fileWriter.append(c.getName()).append(",")
+                        .append(commit).append(",")
+                        .append(String.valueOf(c.getCommits().size())).append(DELIMITER);
             }
 
             flushAndCloseFW(fileWriter, logger, CLASS);

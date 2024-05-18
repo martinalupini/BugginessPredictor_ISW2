@@ -180,11 +180,26 @@ public class ExtractFromGit {
         // checking on all commits (of all the releases)
         addCommitsToClass(classes, commitList);
         //checking on all tickets
-        setBuggyness(ticketList, classes);
+        //setBuggyness(ticketList, classes);
 
 
         return classes;
 
+    }
+
+    public void addCommitsToClass(List<JavaClass> classes, List<RevCommit> commits) throws IOException {
+
+        for(RevCommit commit: commits){
+            Release releaseOfCommit = ReleaseUtils.getReleaseOfCommit(commit, fullReleaseList);
+            List<String> modifiedClassesNames = getTouchedClassesNames(commit);
+            for(String modifiedClass: modifiedClassesNames){
+                for(JavaClass projectClass: classes){
+                    if(projectClass.getRelease().equals(releaseOfCommit) && projectClass.getName().equals(modifiedClass) && !projectClass.getCommits().contains(commit)) {
+                        projectClass.addCommit(commit);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -213,22 +228,6 @@ public class ExtractFromGit {
                     labelBuggyClasses(modifiedClass, injectedVersion, releaseOfCommit, allProjectClasses, commit);
                 }
 
-            }
-        }
-    }
-
-
-    public void addCommitsToClass(List<JavaClass> classes, List<RevCommit> commits) throws IOException {
-
-        for(RevCommit commit: commits){
-            Release releaseOfCommit = ReleaseUtils.getReleaseOfCommit(commit, fullReleaseList);
-            List<String> modifiedClassesNames = getTouchedClassesNames(commit);
-            for(String modifiedClass: modifiedClassesNames){
-                for(JavaClass projectClass: classes){
-                    if(projectClass.getRelease().equals(releaseOfCommit) && projectClass.getName().equals(modifiedClass) && !projectClass.getCommits().contains(commit)) {
-                        projectClass.addCommit(commit);
-                    }
-                }
             }
         }
     }
