@@ -46,6 +46,7 @@ public class JavaClass {
         this.buggyness = false;
         this.nRevisions = 0;
         this.nAuth = 0;
+        this.nFix = 0;
         this.loc = 0;
         this.locAdded = 0;
         this.locTouched = 0;

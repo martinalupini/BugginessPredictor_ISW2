@@ -5,6 +5,7 @@ import it.lupini.model.Release;
 import it.lupini.model.Ticket;
 import it.lupini.utils.ReleaseUtils;
 import it.lupini.utils.ReportUtils;
+import it.lupini.model.ClassifierEvaluation;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.util.List;
@@ -74,12 +75,12 @@ public class ExtractData {
         print = project+": csv and arff files created.";
         logger.info(print);
 
-        /*
-        ClassifyWithWeka classify = new ClassifyWithWeka(project.toLowerCase(), releaseList.size()-1);
+
+        ClassifyWithWeka classify = new ClassifyWithWeka(project.toLowerCase(), toRelease-2);
         List<ClassifierEvaluation> evaluations = classify.evaluateClassifiers();
         WriteCSV.writeFinalWekaResults(project, evaluations);
 
-         */
+
 
     }
 }

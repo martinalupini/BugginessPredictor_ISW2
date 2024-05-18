@@ -10,6 +10,7 @@ import weka.core.converters.ConverterUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ClassifyWithWeka {
 
@@ -23,6 +24,8 @@ public class ClassifyWithWeka {
         this.getClassifiers = new GetClassifiers();
 
     }
+
+    private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
 
     public List<ClassifierEvaluation> evaluateClassifiers() throws Exception {
         List<ClassifierEvaluation> evaluations = new ArrayList<>();
