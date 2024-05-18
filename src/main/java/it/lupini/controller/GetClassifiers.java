@@ -85,7 +85,7 @@ public class GetClassifiers {
             CostSensitiveClassifier costSensitiveClassifier = getCostSensitiveClassifier();
             costSensitiveClassifier.setClassifier(classifier);
 
-            WekaClassifier wekaClassifier = new WekaClassifier(costSensitiveClassifier, classifier.getClass().getSimpleName(), "none", "none", "Sensitive Threshold");
+            WekaClassifier wekaClassifier = new WekaClassifier(costSensitiveClassifier, classifier.getClass().getSimpleName(), "none", "none", "SensitiveThreshold");
             classifiers.add(wekaClassifier);
         }
     }
@@ -128,7 +128,7 @@ public class GetClassifiers {
             FilteredClassifier fc = getFilteredPlusFeature(costSensitiveClassifier, trainingSet);
 
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", this.featureType, "Sensitive Threshold" );
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", this.featureType, "SensitiveThreshold" );
             classifiers.add(wekaClassifier);
 
         }

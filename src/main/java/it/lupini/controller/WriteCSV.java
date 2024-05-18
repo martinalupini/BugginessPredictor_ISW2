@@ -1,5 +1,6 @@
 package it.lupini.controller;
 
+import it.lupini.model.AcumeClass;
 import it.lupini.model.ClassifierEvaluation;
 import it.lupini.model.JavaClass;
 
@@ -90,6 +91,36 @@ public class WriteCSV {
                         .append(String.valueOf(e.getFP())).append(",")
                         .append(String.valueOf(e.getTN())).append(",")
                         .append(String.valueOf(e.getFN())).append("\n");
+            }
+
+            fileWriter.flush();
+        } catch (IOException e) {
+            //ignore
+        }
+    }
+
+    public static void createAcumeFiles(String project, List<AcumeClass> classes, String name) throws IOException {
+        project = project.toLowerCase();
+        String buggy;
+        File file = new File("acumeFiles/" + project);
+        if (!file.exists()) {
+            boolean created = file.mkdirs();
+            if (!created) {
+                throw new IOException();
+            }
+        }
+
+        file = new File("acumeFiles/" + project+ "/"+name+".csv");
+        try(FileWriter fileWriter = new FileWriter(file)) {
+
+            fileWriter.append("Name,Size,Predicted %,Actual value").append("\n");
+            for (AcumeClass c: classes){
+
+
+                fileWriter.append(c.getName()).append(",")
+                        .append(c.getSize()).append(",")
+                        .append(c.getPredictedProbability()).append(",")
+                        .append(c.getActualValue()).append("\n");
             }
 
             fileWriter.flush();

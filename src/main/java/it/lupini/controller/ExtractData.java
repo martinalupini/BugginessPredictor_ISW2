@@ -76,7 +76,7 @@ public class ExtractData {
         logger.info(print);
 
 
-        ClassifyWithWeka classify = new ClassifyWithWeka(project.toLowerCase(), toRelease-2);
+        ClassifyWithWeka classify = new ClassifyWithWeka(project.toLowerCase(), toRelease-2, classesWithMetrics);
         List<ClassifierEvaluation> evaluations = classify.evaluateClassifiers();
         WriteCSV.writeFinalWekaResults(project, evaluations);
 
