@@ -69,16 +69,7 @@ public class ClassifyWithWeka {
 
                 if(i==this.iterations){
 
-                    String name = wekaClassifier.getName();
-                    if(!wekaClassifier.getFeatureSelection().equals("none")){
-                        name = name + "_"+ wekaClassifier.getFeatureSelection();
-                    }
-                    if(!wekaClassifier.getSampling().equals("none")){
-                        name = name + "_"+ wekaClassifier.getSampling();
-                    }
-                    if(!wekaClassifier.getCostSensitive().equals("none")){
-                        name = name + "_"+ wekaClassifier.getCostSensitive();
-                    }
+                    String name = getNameOfFile(wekaClassifier);
 
                     evaluateProbabilityAndCreateAcume(name, classifier, testingSet);
 
@@ -92,13 +83,29 @@ public class ClassifyWithWeka {
     }
 
 
+    private String getNameOfFile(WekaClassifier wekaClassifier){
+        String name = wekaClassifier.getName();
+        if(!wekaClassifier.getFeatureSelection().equals("none")){
+            name = name + "_"+ wekaClassifier.getFeatureSelection();
+        }
+        if(!wekaClassifier.getSampling().equals("none")){
+            name = name + "_"+ wekaClassifier.getSampling();
+        }
+        if(!wekaClassifier.getCostSensitive().equals("none")){
+            name = name + "_"+ wekaClassifier.getCostSensitive();
+        }
+        return name;
+    }
+
     private void evaluateProbabilityAndCreateAcume(String name, Classifier classifier, Instances testingSet) throws Exception {
 
         int numtesting = testingSet.numInstances();
+        int id =0;
 
         acumeClasses.clear();
         List<JavaClass> lastReleaseClasses = new ArrayList<>(allClasses);
         lastReleaseClasses.removeIf(javaClass -> javaClass.getRelease().id() != iterations+2);
+
 
         // Loop over each test instance.
         for (int i = 0; i < numtesting; i++)
@@ -108,14 +115,6 @@ public class ClassifyWithWeka {
             String trueClassLabel =
                     testingSet.instance(i).toString(testingSet.classIndex());
 
-            // Make the prediction here.
-            double predictionIndex =
-                    classifier.classifyInstance(testingSet.instance(i));
-
-            // Get the predicted class label from the predictionIndex.
-            String predictedClassLabel =
-                    testingSet.classAttribute().value((int) predictionIndex);
-
             // Get the prediction probability distribution.
             double[] predictionDistribution =
                     classifier.distributionForInstance(testingSet.instance(i));
@@ -123,8 +122,10 @@ public class ClassifyWithWeka {
             // Get the probability.
             double predictionProbability = predictionDistribution[0];
 
-            AcumeClass acumeClass = new AcumeClass(javaClass.getName(), javaClass.getLoc(), predictionProbability, trueClassLabel);
+            AcumeClass acumeClass = new AcumeClass(id, javaClass.getLoc(), predictionProbability, trueClassLabel);
             acumeClasses.add(acumeClass);
+
+            id++;
         }
 
         WriteCSV.createAcumeFiles(project,acumeClasses, name);

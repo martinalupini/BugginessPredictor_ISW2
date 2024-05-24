@@ -1,21 +1,18 @@
 package it.lupini.model;
 
 public class AcumeClass {
-    private String name;
+    private int id;
     private int size;
     private double predictedProbability;
     private String actualValue;
 
-    public AcumeClass(String name, int size, double predictedProbability, String actualValue) {
-        this.name = name;
+    public AcumeClass(int id, int size, double predictedProbability, String actualValue) {
+        this.id = id;
         this.size = size;
         this.predictedProbability = predictedProbability;
         this.actualValue = actualValue;
     }
 
-    public String getName() {
-        return name;
-    }
 
     public String getSize() {
         return String.valueOf(size);
@@ -27,5 +24,9 @@ public class AcumeClass {
 
     public String getActualValue() {
         return actualValue;
+    }
+
+    public int getId() {
+        return id;
     }
 }

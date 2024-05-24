@@ -117,11 +117,11 @@ public class WriteCSV {
         file = new File("acumeFiles/" + project+ SLASH+name+".csv");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
-            fileWriter.append("Name,Size,Predicted %,Actual value").append(DELIMITER);
+            fileWriter.append("ID,Size,Predicted %,Actual value").append(DELIMITER);
             for (AcumeClass c: classes){
 
 
-                fileWriter.append(c.getName()).append(COMMA)
+                fileWriter.append(String.valueOf(c.getId())).append(COMMA)
                         .append(c.getSize()).append(COMMA)
                         .append(c.getPredictedProbability()).append(COMMA)
                         .append(c.getActualValue()).append(DELIMITER);
