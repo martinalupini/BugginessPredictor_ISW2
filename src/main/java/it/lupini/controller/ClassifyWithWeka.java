@@ -134,7 +134,6 @@ public class ClassifyWithWeka {
 
             AcumeClass acumeClass = new AcumeClass(javaClass.getName(), javaClass.getLoc(), predictionProbability, trueClassLabel);
             acumeClasses.add(acumeClass);
-
         }
 
         WriteCSV.createAcumeFiles(project,acumeClasses, name);
