@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 public class ExtractData {
 
     private static int fromRelease = 3;
-    private static int toRelease;
 
     private ExtractData(){}
 
@@ -51,7 +50,7 @@ public class ExtractData {
 
 
         //removing half of the releases before extracting the classes
-        toRelease = (int) Math.floor(releaseList.size() / 2);
+        int toRelease = releaseList.size() / 2;
         releaseList =  ReleaseUtils.removeHalfReleases(releaseList);
         gitExtractor.setReleaseList(releaseList);
         ReportUtils.printReleases(project, releaseList, "HalfReleases.csv");

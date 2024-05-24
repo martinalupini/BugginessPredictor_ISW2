@@ -21,7 +21,7 @@ public class ClassifyWithWeka {
     private GetClassifiers getClassifiers;
     private List<JavaClass> allClasses;
     List<AcumeClass> acumeClasses;
-    private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
+    private static final Logger logger = Logger.getLogger(ClassifyWithWeka.class.getName());
 
     public ClassifyWithWeka(String project, int iterations, List<JavaClass> allClasses) {
         this.project = project;
@@ -120,17 +120,8 @@ public class ClassifyWithWeka {
             double[] predictionDistribution =
                     classifier.distributionForInstance(testingSet.instance(i));
 
-            // Print out the true label, predicted label, and the distribution.
-            //System.out.printf("%5d: true=%-10s, predicted=%-10s, distribution=", i, trueClassLabel, predictedClassLabel);
-
-
-            // Get this distribution index's class label YES.
-            String predictionDistributionIndexAsClassLabel = testingSet.classAttribute().value(0);
-
             // Get the probability.
             double predictionProbability = predictionDistribution[0];
-
-            //System.out.printf("[%10s : %6.3f]", 0, predictionProbability );
 
             AcumeClass acumeClass = new AcumeClass(javaClass.getName(), javaClass.getLoc(), predictionProbability, trueClassLabel);
             acumeClasses.add(acumeClass);

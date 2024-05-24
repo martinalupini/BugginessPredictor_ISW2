@@ -30,11 +30,7 @@ import java.util.*;
 public class ExtractFromGit {
     private List<Ticket> ticketList;
     private List<Release> releaseList;
-
-    private List<RevCommit> issueCommits;
-
     private List<Release> fullReleaseList;
-
     private List<RevCommit> commitList;
     private Git git;
     private Repository repository;
@@ -126,7 +122,6 @@ public class ExtractFromGit {
 
         //removing ticket not related to any issues from the ticket list
         ticketList.removeIf(ticket -> ticket.getCommitList().isEmpty());
-        this.issueCommits = filteredCommits;
         return filteredCommits;
     }
 
@@ -179,9 +174,6 @@ public class ExtractFromGit {
 
         // checking on all commits (of all the releases)
         addCommitsToClass(classes, commitList);
-        //checking on all tickets
-        //setBuggyness(ticketList, classes);
-
 
         return classes;
 
