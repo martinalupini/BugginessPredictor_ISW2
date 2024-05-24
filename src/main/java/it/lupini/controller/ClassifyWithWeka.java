@@ -139,7 +139,6 @@ public class ClassifyWithWeka {
 
         WriteCSV.createAcumeFiles(project,acumeClasses, name);
 
-
     }
 
 
