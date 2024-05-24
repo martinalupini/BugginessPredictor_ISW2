@@ -21,6 +21,7 @@ public class ClassifyWithWeka {
     private GetClassifiers getClassifiers;
     private List<JavaClass> allClasses;
     List<AcumeClass> acumeClasses;
+    private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
 
     public ClassifyWithWeka(String project, int iterations, List<JavaClass> allClasses) {
         this.project = project;
@@ -31,10 +32,9 @@ public class ClassifyWithWeka {
 
     }
 
-    private static final Logger logger = Logger.getLogger(ExtractData.class.getName());
-
     public List<ClassifierEvaluation> evaluateClassifiers() throws Exception {
         List<ClassifierEvaluation> evaluations = new ArrayList<>();
+        String print;
         for(int i = 1; i <= this.iterations; i++){
 
             //getting training and testing set
@@ -48,7 +48,9 @@ public class ClassifyWithWeka {
 
             List<WekaClassifier> classifiers = getClassifiers.getClassifiers(trainingSet);
 
-            System.out.println("iteration "+i+" testing set: "+testingSet.numInstances()+" training set: "+trainingSet.numInstances()+" num attr: "+trainingSet.numAttributes());
+            print ="Iteration "+i+" - testing set: "+testingSet.numInstances()+" training set: "+trainingSet.numInstances();
+            logger.info(print);
+
             for(WekaClassifier wekaClassifier : classifiers){
                 Classifier classifier = wekaClassifier.getClassifier();
 

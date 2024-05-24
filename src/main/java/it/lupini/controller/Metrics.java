@@ -28,7 +28,6 @@ public class Metrics {
         countLoc();
         countComments();
         computeNR();
-        //computeNFix();
         computeNAuth();
         computeLOCMetrics();
 
@@ -153,6 +152,8 @@ public class Metrics {
             //labelling buggyness for the training set
             gitExtractor.setBuggyness(allTickets, testingClasses);
             computeNFix(testingClasses);
+            //leaving only the buggy classes for the release prior the testing one to reduce snoring
+            trainingClasses.removeIf(javaClass -> javaClass.getRelease().id() == testRelease-1 && !javaClass.getBuggyness());
 
 
             //creating the csv files
