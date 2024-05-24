@@ -13,12 +13,12 @@ public class ClassifierEvaluation {
     private String costSensitive;
     private double precision;
     private double recall;
-    private double AUC;
+    private double auc;
     private double kappa;
-    private double TP;
-    private double FP;
-    private double TN;
-    private double FN;
+    private double tp;
+    private double fp;
+    private double tn;
+    private double fn;
 
     public ClassifierEvaluation(String project, int iteration, Evaluation evaluation, WekaClassifier classifier, double trainingPercent) {
         this.project = project;
@@ -30,12 +30,12 @@ public class ClassifierEvaluation {
         this.trainingPercent = trainingPercent;
         this.precision = evaluation.precision(0);
         this.recall = evaluation.recall(0);
-        this.AUC = evaluation.areaUnderROC(0);
+        this.auc = evaluation.areaUnderROC(0);
         this.kappa = evaluation.kappa();
-        this.TP = evaluation.numTruePositives(0);
-        this.FP = evaluation.numFalsePositives(0);
-        this.TN = evaluation.numTrueNegatives(0);
-        this.FN = evaluation.numFalseNegatives(0);
+        this.tp = evaluation.numTruePositives(0);
+        this.fp = evaluation.numFalsePositives(0);
+        this.tn = evaluation.numTrueNegatives(0);
+        this.fn = evaluation.numFalseNegatives(0);
 
     }
 
@@ -75,27 +75,27 @@ public class ClassifierEvaluation {
         return recall;
     }
 
-    public double getAUC() {
-        return AUC;
+    public double getAuc() {
+        return auc;
     }
 
     public double getKappa() {
         return kappa;
     }
 
-    public double getTP() {
-        return TP;
+    public double getTp() {
+        return tp;
     }
 
-    public double getFP() {
-        return FP;
+    public double getFp() {
+        return fp;
     }
 
-    public double getTN() {
-        return TN;
+    public double getTn() {
+        return tn;
     }
 
-    public double getFN() {
-        return FN;
+    public double getFn() {
+        return fn;
     }
 }
