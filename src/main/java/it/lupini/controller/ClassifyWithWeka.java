@@ -48,7 +48,7 @@ public class ClassifyWithWeka {
 
             List<WekaClassifier> classifiers = getClassifiers.getClassifiers(trainingSet);
 
-            print ="Iteration "+i+" - testing set: "+testingSet.numInstances()+" training set: "+trainingSet.numInstances();
+            print =project.toUpperCase()+ ": Iteration "+i+" - testing set: "+testingSet.numInstances()+" training set: "+trainingSet.numInstances();
             logger.info(print);
 
             for(WekaClassifier wekaClassifier : classifiers){
@@ -63,7 +63,7 @@ public class ClassifyWithWeka {
 
                 //collecting the results
                 double trainingPercent = 100.0 * trainingSet.numInstances() / (trainingSet.numInstances() + testingSet.numInstances());
-                ClassifierEvaluation classifierEvaluation = new ClassifierEvaluation(project, i, evaluator, wekaClassifier, trainingPercent);
+                ClassifierEvaluation classifierEvaluation = new ClassifierEvaluation(project, i, evaluator, wekaClassifier, trainingPercent, 1.0, 10.0);
                 evaluations.add(classifierEvaluation);
 
 

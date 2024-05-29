@@ -66,7 +66,7 @@ public class WriteCSV {
 
     public static void writeFinalWekaResults(String project, List<ClassifierEvaluation> evaluations) throws IOException {
         project = project.toLowerCase();
-        File file = new File("finalWekaResults/" + project);
+        File file = new File("finalWekaResults/");
         if (!file.exists()) {
             boolean created = file.mkdirs();
             if (!created) {
@@ -75,10 +75,10 @@ public class WriteCSV {
         }
 
 
-        file = new File("finalWekaResults/" + project+ "/results.csv");
+        file = new File("finalWekaResults/" + project+ "_results.csv");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
-            fileWriter.append("Iteration,%TrainingInstances,Classifier,Feature Selection,Sampling,Cost Sensitive,Precision,Recall,AUC,Kappa,TP,FP,TN,FN").append(DELIMITER);
+            fileWriter.append("Iteration,%TrainingInstances,Classifier,Feature Selection,Sampling,Cost Sensitive,Precision,Recall,AUC,Kappa,TP,FP,TN,FN,Cost").append(DELIMITER);
             for (ClassifierEvaluation e: evaluations){
 
                 fileWriter.append(String.valueOf(e.getIteration())).append(COMMA)
@@ -94,7 +94,8 @@ public class WriteCSV {
                         .append(String.valueOf(e.getTp())).append(COMMA)
                         .append(String.valueOf(e.getFp())).append(COMMA)
                         .append(String.valueOf(e.getTn())).append(COMMA)
-                        .append(String.valueOf(e.getFn())).append(DELIMITER);
+                        .append(String.valueOf(e.getFn())).append(COMMA)
+                        .append(String.valueOf(e.getCost())).append(DELIMITER);
             }
 
             fileWriter.flush();

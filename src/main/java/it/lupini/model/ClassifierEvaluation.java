@@ -19,8 +19,9 @@ public class ClassifierEvaluation {
     private double fp;
     private double tn;
     private double fn;
+    private double cost;
 
-    public ClassifierEvaluation(String project, int iteration, Evaluation evaluation, WekaClassifier classifier, double trainingPercent) {
+    public ClassifierEvaluation(String project, int iteration, Evaluation evaluation, WekaClassifier classifier, double trainingPercent, double costFP, double costFN) {
         this.project = project;
         this.iteration = iteration;
         this.classifier = classifier.getName();
@@ -36,6 +37,7 @@ public class ClassifierEvaluation {
         this.fp = evaluation.numFalsePositives(0);
         this.tn = evaluation.numTrueNegatives(0);
         this.fn = evaluation.numFalseNegatives(0);
+        this.cost = fp*costFP + fn*costFN;
 
     }
 
@@ -97,5 +99,9 @@ public class ClassifierEvaluation {
 
     public double getFn() {
         return fn;
+    }
+
+    public double getCost() {
+        return cost;
     }
 }
