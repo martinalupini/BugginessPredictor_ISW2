@@ -66,14 +66,10 @@ public class ClassifyWithWeka {
                 ClassifierEvaluation classifierEvaluation = new ClassifierEvaluation(project, i, evaluator, wekaClassifier, trainingPercent, 1.0, 10.0);
                 evaluations.add(classifierEvaluation);
 
+                //retrieving probability of predictions
+                String name = getNameOfFile(wekaClassifier, i);
+                evaluateProbabilityAndCreateAcume(name, classifier, testingSet, i);
 
-                if(i==this.iterations){
-
-                    String name = getNameOfFile(wekaClassifier);
-
-                    evaluateProbabilityAndCreateAcume(name, classifier, testingSet);
-
-                }
 
             }
 
@@ -83,7 +79,7 @@ public class ClassifyWithWeka {
     }
 
 
-    private String getNameOfFile(WekaClassifier wekaClassifier){
+    private String getNameOfFile(WekaClassifier wekaClassifier, int iteration){
         String name = wekaClassifier.getName();
         if(!wekaClassifier.getFeatureSelection().equals("none")){
             name = name + "_"+ wekaClassifier.getFeatureSelection();
@@ -94,17 +90,18 @@ public class ClassifyWithWeka {
         if(!wekaClassifier.getCostSensitive().equals("none")){
             name = name + "_"+ wekaClassifier.getCostSensitive();
         }
+        name= name+"_"+iteration;
         return name;
     }
 
-    private void evaluateProbabilityAndCreateAcume(String name, Classifier classifier, Instances testingSet) throws Exception {
+    private void evaluateProbabilityAndCreateAcume(String name, Classifier classifier, Instances testingSet, int iteration) throws Exception {
 
         int numtesting = testingSet.numInstances();
         int id =0;
 
         acumeClasses.clear();
         List<JavaClass> lastReleaseClasses = new ArrayList<>(allClasses);
-        lastReleaseClasses.removeIf(javaClass -> javaClass.getRelease().id() != iterations+2);
+        lastReleaseClasses.removeIf(javaClass -> javaClass.getRelease().id() != iteration+2);
 
 
         // Loop over each test instance.
