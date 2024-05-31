@@ -11,6 +11,8 @@ public class WriteArff {
 
     private WriteArff(){}
 
+    public static final String SLASH = "/";
+
     public static void createArff(String project, List<JavaClass> classes, int iteration, String type) throws IOException {
         project = project.toLowerCase();
         String buggy;
@@ -22,7 +24,7 @@ public class WriteArff {
             }
         }
 
-        file = new File("arffFiles/" + project + "/iteration_" + iteration + "/" + type + ".arff");
+        file = new File("arffFiles/" + project + "/iteration_" + iteration + SLASH + type + ".arff");
         try (FileWriter fileWriter = new FileWriter(file)) {
 
             fileWriter.append("@relation " + project + "_" + type + "_" + iteration).append("\n\n")
