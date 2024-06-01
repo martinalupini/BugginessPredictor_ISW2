@@ -35,7 +35,11 @@ public class ClassifyWithWeka {
     public List<ClassifierEvaluation> evaluateClassifiers() throws Exception {
         List<ClassifierEvaluation> evaluations = new ArrayList<>();
         String print;
+        List<WekaClassifier> classifiers = new ArrayList<>();
+
         for(int i = 1; i <= this.iterations; i++){
+
+            classifiers.clear();
 
             //getting training and testing set
             Instances trainingSet = ConverterUtils.DataSource.read("arffFiles/"+project+"/iteration_"+i+"/Training.arff");
@@ -46,7 +50,7 @@ public class ClassifyWithWeka {
             trainingSet.setClassIndex(numAttr - 1);
             testingSet.setClassIndex(numAttr - 1);
 
-            List<WekaClassifier> classifiers = getClassifiers.getClassifiers(trainingSet);
+            classifiers = getClassifiers.getClassifiers(trainingSet);
 
             print =project.toUpperCase()+ ": Iteration "+i+" - testing set: "+testingSet.numInstances()+" training set: "+trainingSet.numInstances();
             logger.info(print);
