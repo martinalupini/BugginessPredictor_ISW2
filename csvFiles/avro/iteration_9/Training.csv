@@ -1058,13 +1058,3 @@ lang/java/src/java/org/apache/avro/tool/Tool.java,9,51,38,0,0,0,0,0,0,0,0,0,0,NO
 lang/java/src/java/org/apache/avro/tool/Util.java,9,119,35,0,0,0,0,0,0,0,0,0,0,NO
 lang/java/src/java/org/apache/avro/util/Utf8.java,9,132,32,1,1,0,18,13,13,13,8,8,8,NO
 lang/java/src/java/org/apache/avro/util/WeakIdentityHashMap.java,9,169,33,0,0,0,0,0,0,0,0,0,0,NO
-lang/java/avro/src/main/java/org/apache/avro/AvroRemoteException.java,10,40,18,1,1,0,41,41,41,41,41,41,41,YES
-lang/java/avro/src/main/java/org/apache/avro/Protocol.java,10,449,64,1,1,0,450,450,450,450,450,450,450,YES
-lang/java/avro/src/main/java/org/apache/avro/reflect/ReflectData.java,10,478,38,3,2,1,480,479,477,159,478,477,159,YES
-lang/java/avro/src/main/java/org/apache/avro/specific/SpecificData.java,10,202,24,3,2,1,202,202,194,67,202,194,67,YES
-lang/java/avro/src/main/java/org/apache/avro/util/Utf8.java,10,132,32,2,1,0,148,140,132,70,132,132,66,YES
-lang/java/ipc/src/main/java/org/apache/avro/ipc/Requestor.java,10,285,33,7,2,2,314,300,272,42,286,272,40,YES
-lang/java/ipc/src/main/java/org/apache/avro/ipc/SocketServer.java,10,145,23,4,2,0,149,147,144,36,145,144,36,YES
-lang/java/ipc/src/main/java/org/apache/avro/ipc/generic/GenericRequestor.java,10,75,18,1,1,0,76,76,76,76,76,76,76,YES
-lang/java/ipc/src/main/java/org/apache/avro/ipc/specific/SpecificRequestor.java,10,120,22,1,1,0,121,121,121,121,121,121,121,YES
-lang/java/ipc/src/main/java/org/apache/avro/ipc/specific/SpecificResponder.java,10,98,18,2,2,1,145,122,107,61,115,107,57,YES

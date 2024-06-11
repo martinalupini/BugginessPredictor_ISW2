@@ -220,4 +220,3 @@ bookkeeper/src/main/java/org/apache/bookkeeper/util/MathUtils.java,1,38,20,1,1,0
 bookkeeper/src/main/java/org/apache/bookkeeper/util/OrderedSafeExecutor.java,1,98,42,1,1,0,98,98,98,98,98,98,98,NO
 bookkeeper/src/main/java/org/apache/bookkeeper/util/SafeRunnable.java,1,38,17,1,1,0,38,38,38,38,38,38,38,NO
 bookkeeper/src/main/java/org/apache/bookkeeper/util/StringUtils.java,1,94,42,1,1,0,94,94,94,94,94,94,94,NO
-bookkeeper-server/src/main/java/org/apache/bookkeeper/jmx/BKMBeanRegistry.java,2,88,35,2,1,0,90,89,84,44,88,84,44,YES

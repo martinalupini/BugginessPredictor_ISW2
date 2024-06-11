@@ -139,7 +139,7 @@ public class Metrics {
 
             //getting the tickets before the testing release
             List<Ticket> ticketList = new ArrayList<>(allTickets);
-            ticketList.removeIf(ticket -> ticket.getOv().id()>=testRelease);
+            ticketList.removeIf(ticket -> ticket.getFv().id()>=testRelease);
 
             //getting the testing set
             List<JavaClass> testingClasses = new ArrayList<>(allClasses);

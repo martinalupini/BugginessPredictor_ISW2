@@ -553,11 +553,11 @@ bookkeeper-server/src/main/java/org/apache/bookkeeper/proto/PerChannelBookieClie
 bookkeeper-server/src/main/java/org/apache/bookkeeper/proto/ServerStats.java,3,150,15,1,1,1,6,4,4,4,2,2,2,YES
 bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/Auditor.java,3,503,54,4,1,0,651,577,234,144,503,234,125,YES
 bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/AuditorElector.java,3,325,87,6,2,0,505,415,269,69,325,269,54,NO
-bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/AutoRecoveryMain.java,3,273,47,6,2,2,313,293,267,48,287,267,47,YES
+bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/AutoRecoveryMain.java,3,273,47,6,2,2,313,293,267,48,287,267,47,NO
 bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/BookieLedgerIndexer.java,3,136,32,3,2,1,148,142,139,47,142,139,47,NO
 bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/ReplicationEnableCb.java,3,56,30,1,1,0,56,56,56,56,56,56,56,NO
 bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/ReplicationException.java,3,74,30,3,2,0,88,81,63,27,74,63,24,NO
-bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/ReplicationWorker.java,3,357,64,8,1,0,575,466,289,58,359,289,44,YES
+bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/ReplicationWorker.java,3,357,64,8,1,0,575,466,289,58,359,289,44,NO
 bookkeeper-server/src/main/java/org/apache/bookkeeper/streaming/LedgerInputStream.java,3,174,60,0,0,0,0,0,0,0,0,0,0,NO
 bookkeeper-server/src/main/java/org/apache/bookkeeper/streaming/LedgerOutputStream.java,3,148,53,0,0,0,0,0,0,0,0,0,0,NO
 bookkeeper-server/src/main/java/org/apache/bookkeeper/tools/BookKeeperTools.java,3,92,44,0,0,0,0,0,0,0,0,0,0,NO
@@ -774,8 +774,3 @@ hedwig-client/src/main/java/org/apache/hedwig/filter/MessageFilter.java,3,70,48,
 hedwig-server/src/main/java/org/apache/hedwig/server/subscriptions/MessageFilter.java,3,31,23,0,0,0,0,0,0,0,0,0,0,NO
 hedwig-server/src/main/java/org/apache/hedwig/server/subscriptions/TrueFilter.java,3,32,17,0,0,0,0,0,0,0,0,0,0,NO
 hedwig-server/src/main/java/org/apache/hedwig/server/subscriptions/ZkSubscriptionManager.java,3,227,17,0,0,0,0,0,0,0,0,0,0,NO
-bookkeeper-server/src/main/java/org/apache/bookkeeper/client/LedgerHandle.java,4,979,299,1,1,1,9,5,5,5,1,1,1,YES
-bookkeeper-server/src/main/java/org/apache/bookkeeper/client/LedgerMetadata.java,4,495,105,2,2,2,62,45,40,22,28,26,14,YES
-bookkeeper-server/src/main/java/org/apache/bookkeeper/client/PendingAddOp.java,4,182,52,0,0,0,0,0,0,0,0,0,0,YES
-bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/AutoRecoveryMain.java,4,273,47,0,0,0,0,0,0,0,0,0,0,YES
-bookkeeper-server/src/main/java/org/apache/bookkeeper/replication/ReplicationWorker.java,4,359,64,1,1,0,2,2,2,2,2,2,2,YES

@@ -9,9 +9,11 @@ import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.CostSensitiveClassifier;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.trees.RandomForest;
+import weka.core.AttributeStats;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.filters.supervised.attribute.AttributeSelection;
+import weka.filters.supervised.instance.Resample;
 import weka.filters.supervised.instance.SMOTE;
 
 import java.util.ArrayList;
@@ -19,44 +21,51 @@ import java.util.List;
 
 public class GetClassifiers {
 
-    private List<WekaClassifier> classifiers;
-
-    private String featureType;
-
-
-    public GetClassifiers() {
-        this.classifiers = new ArrayList<>();
+    private GetClassifiers() {
     }
 
-    public List<WekaClassifier> getClassifiers(Instances trainingSet) throws Exception {
+    public static List<WekaClassifier> getClassifiers(Instances trainingSet){
 
-        noFilters();
-        featureSelection(trainingSet);
-        sampling(trainingSet);
-        costSensitive();
-        featureAndSampling(trainingSet);
-        featureAndCost(trainingSet);
+        List<WekaClassifier> classifiers = new ArrayList<>();
+
+
+        int numAttributes = trainingSet.numAttributes();
+        AttributeStats attributeStats = trainingSet.attributeStats(numAttributes-1);
+        int majorityClassSize = attributeStats.nominalCounts[1];
+        int minorityClassSize = attributeStats.nominalCounts[0];
+
+        double percentageSmote  =  (100.0*(majorityClassSize-minorityClassSize))/minorityClassSize;
+        double percentageOversampling = ((100.0*majorityClassSize)/(majorityClassSize + minorityClassSize))*2;
+
+        noFilters(classifiers);
+        featureSelection(classifiers);
+        smote(classifiers, percentageSmote);
+        oversampling(classifiers, percentageOversampling);
+        costSensitive(classifiers);
+        featureAndSmote(classifiers, percentageSmote);
+        featureAndOversampling(classifiers, percentageOversampling);
+        featureAndCost(classifiers);
 
         return classifiers;
 
     }
 
 
-    private void featureSelection(Instances trainingSet) throws Exception {
+    private static void featureSelection(List<WekaClassifier> classifiers){
         List<Classifier> baseClassifiers = getBaseClassifiers();
 
         for (Classifier classifier : baseClassifiers) {
 
-            FilteredClassifier fc = getFilteredPlusFeature(classifier, trainingSet);
+            FilteredClassifier fc = getFilteredPlusFeature(classifier);
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", this.featureType, "none");
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", "BestFirst(backward", "none");
             classifiers.add(wekaClassifier);
         }
 
     }
 
 
-    private void sampling(Instances trainingSet) throws Exception {
+    private static void smote(List<WekaClassifier> classifiers, double percentageSmote){
 
         List<Classifier> baseClassifiers = getBaseClassifiers();
 
@@ -66,7 +75,7 @@ public class GetClassifiers {
             fc.setClassifier(classifier);
 
             SMOTE smote = new SMOTE();
-            smote.setInputFormat(trainingSet);
+            smote.setPercentage(percentageSmote);
             fc.setFilter(smote);
 
 
@@ -78,7 +87,30 @@ public class GetClassifiers {
     }
 
 
-    private void costSensitive(){
+    private static void oversampling(List<WekaClassifier> classifiers, double percentageOversampling){
+
+        List<Classifier> baseClassifiers = getBaseClassifiers();
+
+        for (Classifier classifier : baseClassifiers) {
+
+            FilteredClassifier fc = new FilteredClassifier();
+            fc.setClassifier(classifier);
+
+            Resample resample = new Resample();
+            resample.setBiasToUniformClass(1.0);
+            resample.setSampleSizePercent(percentageOversampling);
+            fc.setFilter(resample);
+
+
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "Oversampling", "none", "none");
+            classifiers.add(wekaClassifier);
+        }
+
+
+    }
+
+
+    private static void costSensitive(List<WekaClassifier> classifiers){
         List<Classifier> baseClassifiers = getBaseClassifiers();
 
         for (Classifier classifier : baseClassifiers) {
@@ -90,23 +122,49 @@ public class GetClassifiers {
         }
     }
 
-    private void featureAndSampling(Instances trainingSet) throws Exception {
+    private static void featureAndSmote(List<WekaClassifier> classifiers, double percentageSmote){
         List<Classifier> baseClassifiers = getBaseClassifiers();
 
         for (Classifier classifier : baseClassifiers) {
 
             //feature selection
-            FilteredClassifier fc1 = getFilteredPlusFeature(classifier, trainingSet);
+            FilteredClassifier fc1 = getFilteredPlusFeature(classifier);
 
-            //sampling
+            //smote
             FilteredClassifier fc = new FilteredClassifier();
-            fc.setClassifier(fc1);
 
             SMOTE smote = new SMOTE();
-            smote.setInputFormat(trainingSet);
+            smote.setPercentage(percentageSmote);
             fc.setFilter(smote);
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), smote.getClass().getSimpleName(), this.featureType, "none" );
+            fc.setClassifier(fc1);
+
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), smote.getClass().getSimpleName(), "BestFirst(backward", "none" );
+            classifiers.add(wekaClassifier);
+
+        }
+
+    }
+
+    private static void featureAndOversampling(List<WekaClassifier> classifiers, double percentageOversampling){
+        List<Classifier> baseClassifiers = getBaseClassifiers();
+
+        for (Classifier classifier : baseClassifiers) {
+
+            //feature selection
+            FilteredClassifier fc1 = getFilteredPlusFeature(classifier);
+
+            //oversampling
+            FilteredClassifier fc = new FilteredClassifier();
+
+            Resample resample = new Resample();
+            resample.setBiasToUniformClass(1.0);
+            resample.setSampleSizePercent(percentageOversampling);
+            fc.setFilter(resample);
+
+            fc.setClassifier(fc1);
+
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "Oversampling", "BestFirst(backward", "none" );
             classifiers.add(wekaClassifier);
 
         }
@@ -114,7 +172,7 @@ public class GetClassifiers {
     }
 
 
-    private void featureAndCost(Instances trainingSet) throws Exception {
+    private static void featureAndCost(List<WekaClassifier> classifiers){
 
         List<Classifier> baseClassifiers = getBaseClassifiers();
 
@@ -125,10 +183,10 @@ public class GetClassifiers {
             costSensitiveClassifier.setClassifier(classifier);
 
             //feature selection
-            FilteredClassifier fc = getFilteredPlusFeature(costSensitiveClassifier, trainingSet);
+            FilteredClassifier fc = getFilteredPlusFeature(costSensitiveClassifier);
 
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", this.featureType, "SensitiveThreshold" );
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", "BestFirst(backward", "SensitiveThreshold" );
             classifiers.add(wekaClassifier);
 
         }
@@ -138,7 +196,7 @@ public class GetClassifiers {
 
 
 
-    private void noFilters(){
+    private static void noFilters(List<WekaClassifier> classifiers){
         List<Classifier> baseClassifiers = getBaseClassifiers();
         for (Classifier classifier : baseClassifiers) {
             WekaClassifier wekaClassifier = new WekaClassifier(classifier, classifier.getClass().getSimpleName(), "none", "none", "none");
@@ -147,7 +205,7 @@ public class GetClassifiers {
     }
 
 
-    private CostSensitiveClassifier getCostSensitiveClassifier(){
+    private static CostSensitiveClassifier getCostSensitiveClassifier(){
         CostSensitiveClassifier costSensitiveClassifier = new CostSensitiveClassifier() ;
         CostMatrix costMatrix = new CostMatrix(2) ;
 
@@ -173,18 +231,15 @@ public class GetClassifiers {
         return classifiers;
     }
 
-    private FilteredClassifier getFilteredPlusFeature(Classifier classifier, Instances trainingSet) throws Exception {
+    private static FilteredClassifier getFilteredPlusFeature(Classifier classifier){
         AttributeSelection attributeSelection = new AttributeSelection();
         BestFirst bestFirst = new BestFirst();
         bestFirst.setDirection(new SelectedTag(0, bestFirst.getDirection().getTags()));
         attributeSelection.setSearch(bestFirst);
-        attributeSelection.setInputFormat(trainingSet);
 
         FilteredClassifier fc = new FilteredClassifier();
         fc.setClassifier(classifier);
         fc.setFilter(attributeSelection);
-
-        this.featureType = attributeSelection.getSearch().getClass().getSimpleName()+"(backward)";
 
         return fc;
     }

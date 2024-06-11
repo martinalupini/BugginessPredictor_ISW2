@@ -447,4 +447,3 @@ hedwig-server/src/main/java/org/apache/hedwig/zookeeper/SafeAsynBKCallback.java,
 hedwig-server/src/main/java/org/apache/hedwig/zookeeper/SafeAsyncCallback.java,2,35,17,1,1,0,2,1,1,1,0,0,0,NO
 hedwig-server/src/main/java/org/apache/hedwig/zookeeper/SafeAsyncZKCallback.java,2,98,17,0,0,0,0,0,0,0,0,0,0,NO
 hedwig-server/src/main/java/org/apache/hedwig/zookeeper/ZkUtils.java,2,79,22,0,0,0,0,0,0,0,0,0,0,NO
-bookkeeper-server/src/main/java/org/apache/bookkeeper/conf/ServerConfiguration.java,3,694,391,6,3,1,161,153,50,25,145,50,24,YES

@@ -206,4 +206,3 @@ src/java/org/apache/avro/specific/SpecificRecordBase.java,3,71,18,0,0,0,0,0,0,0,
 src/java/org/apache/avro/specific/SpecificRequestor.java,3,80,21,1,1,0,2,1,1,1,0,0,0,NO
 src/java/org/apache/avro/specific/SpecificResponder.java,3,40,18,1,1,0,2,1,1,1,0,0,0,YES
 src/java/org/apache/avro/util/Utf8.java,3,87,18,0,0,0,0,0,0,0,0,0,0,NO
-lang/java/src/java/org/apache/avro/reflect/ReflectData.java,4,412,37,3,2,0,446,429,413,143,416,413,138,YES
