@@ -24,6 +24,8 @@ public class GetClassifiers {
     private GetClassifiers() {
     }
 
+    public static final String FEATURE_SELECTION = "BestFirst(backward)";
+
     public static List<WekaClassifier> getClassifiers(Instances trainingSet){
 
         List<WekaClassifier> classifiers = new ArrayList<>();
@@ -58,7 +60,7 @@ public class GetClassifiers {
 
             FilteredClassifier fc = getFilteredPlusFeature(classifier);
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", "BestFirst(backward", "none");
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", FEATURE_SELECTION, "none");
             classifiers.add(wekaClassifier);
         }
 
@@ -139,7 +141,7 @@ public class GetClassifiers {
 
             fc.setClassifier(fc1);
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), smote.getClass().getSimpleName(), "BestFirst(backward", "none" );
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), smote.getClass().getSimpleName(), FEATURE_SELECTION, "none" );
             classifiers.add(wekaClassifier);
 
         }
@@ -164,7 +166,7 @@ public class GetClassifiers {
 
             fc.setClassifier(fc1);
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "Oversampling", "BestFirst(backward", "none" );
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "Oversampling", FEATURE_SELECTION, "none" );
             classifiers.add(wekaClassifier);
 
         }
@@ -186,7 +188,7 @@ public class GetClassifiers {
             FilteredClassifier fc = getFilteredPlusFeature(costSensitiveClassifier);
 
 
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", "BestFirst(backward", "SensitiveThreshold" );
+            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "none", FEATURE_SELECTION, "SensitiveThreshold" );
             classifiers.add(wekaClassifier);
 
         }
