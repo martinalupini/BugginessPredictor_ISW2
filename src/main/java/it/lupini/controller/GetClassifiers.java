@@ -42,10 +42,8 @@ public class GetClassifiers {
         noFilters(classifiers);
         featureSelection(classifiers);
         smote(classifiers, percentageSmote);
-        oversampling(classifiers, percentageOversampling);
         costSensitive(classifiers);
         featureAndSmote(classifiers, percentageSmote);
-        featureAndOversampling(classifiers, percentageOversampling);
         featureAndCost(classifiers);
 
         return classifiers;
@@ -89,29 +87,6 @@ public class GetClassifiers {
     }
 
 
-    private static void oversampling(List<WekaClassifier> classifiers, double percentageOversampling){
-
-        List<Classifier> baseClassifiers = getBaseClassifiers();
-
-        for (Classifier classifier : baseClassifiers) {
-
-            FilteredClassifier fc = new FilteredClassifier();
-            fc.setClassifier(classifier);
-
-            Resample resample = new Resample();
-            resample.setBiasToUniformClass(1.0);
-            resample.setSampleSizePercent(percentageOversampling);
-            fc.setFilter(resample);
-
-
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "Oversampling", "none", "none");
-            classifiers.add(wekaClassifier);
-        }
-
-
-    }
-
-
     private static void costSensitive(List<WekaClassifier> classifiers){
         List<Classifier> baseClassifiers = getBaseClassifiers();
 
@@ -142,31 +117,6 @@ public class GetClassifiers {
             fc.setClassifier(fc1);
 
             WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), smote.getClass().getSimpleName(), FEATURE_SELECTION, "none" );
-            classifiers.add(wekaClassifier);
-
-        }
-
-    }
-
-    private static void featureAndOversampling(List<WekaClassifier> classifiers, double percentageOversampling){
-        List<Classifier> baseClassifiers = getBaseClassifiers();
-
-        for (Classifier classifier : baseClassifiers) {
-
-            //feature selection
-            FilteredClassifier fc1 = getFilteredPlusFeature(classifier);
-
-            //oversampling
-            FilteredClassifier fc = new FilteredClassifier();
-
-            Resample resample = new Resample();
-            resample.setBiasToUniformClass(1.0);
-            resample.setSampleSizePercent(percentageOversampling);
-            fc.setFilter(resample);
-
-            fc.setClassifier(fc1);
-
-            WekaClassifier wekaClassifier = new WekaClassifier(fc, classifier.getClass().getSimpleName(), "Oversampling", FEATURE_SELECTION, "none" );
             classifiers.add(wekaClassifier);
 
         }
