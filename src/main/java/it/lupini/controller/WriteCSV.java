@@ -78,7 +78,7 @@ public class WriteCSV {
         file = new File("finalWekaResults/" + project+ "_results.csv");
         try(FileWriter fileWriter = new FileWriter(file)) {
 
-            fileWriter.append("Iteration,%TrainingInstances,Classifier,Feature Selection,Sampling,Cost Sensitive,Precision,Recall,AUC,Kappa,TP,FP,TN,FN,Cost").append(DELIMITER);
+            fileWriter.append("Iteration,%TrainingInstances,Classifier,Feature Selection,Balancing,Cost Sensitive,Precision,Recall,AUC,Kappa,F1,TP,FP,TN,FN,Cost").append(DELIMITER);
             for (ClassifierEvaluation e: evaluations){
 
                 fileWriter.append(String.valueOf(e.getIteration())).append(COMMA)
@@ -91,6 +91,7 @@ public class WriteCSV {
                         .append(String.valueOf(e.getRecall())).append(COMMA)
                         .append(String.valueOf(e.getAuc())).append(COMMA)
                         .append(String.valueOf(e.getKappa())).append(COMMA)
+                        .append(String.valueOf(e.getF1())).append(COMMA)
                         .append(String.valueOf(e.getTp())).append(COMMA)
                         .append(String.valueOf(e.getFp())).append(COMMA)
                         .append(String.valueOf(e.getTn())).append(COMMA)

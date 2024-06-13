@@ -20,6 +20,7 @@ public class ClassifierEvaluation {
     private double tn;
     private double fn;
     private double cost;
+    private double f1;
 
     public ClassifierEvaluation(String project, int iteration, Evaluation evaluation, WekaClassifier classifier, double trainingPercent, double costFP, double costFN) {
         this.project = project;
@@ -38,6 +39,7 @@ public class ClassifierEvaluation {
         this.tn = evaluation.numTrueNegatives(0);
         this.fn = evaluation.numFalseNegatives(0);
         this.cost = fp*costFP + fn*costFN;
+        this.f1 = evaluation.fMeasure(0);
 
     }
 
@@ -103,5 +105,9 @@ public class ClassifierEvaluation {
 
     public double getCost() {
         return cost;
+    }
+
+    public double getF1() {
+        return f1;
     }
 }

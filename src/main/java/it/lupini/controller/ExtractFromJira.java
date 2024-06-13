@@ -112,7 +112,7 @@ public class ExtractFromJira {
                     continue;
                 }
 
-                //the opening version must be diffrent from the first release
+                //the opening version must be different from the first release
                 if(openingVersion != null && fixedVersion != null && openingVersion.id()!=releasesList.get(0).id()){
                     ticketsList.add(new Ticket(key, creationDate, resolutionDate, openingVersion, fixedVersion, affectedVersionsList));
                 }
