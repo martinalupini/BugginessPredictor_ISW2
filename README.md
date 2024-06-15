@@ -1,13 +1,16 @@
 
-<div style="text-align: left;">
-  <a href="https://sonarcloud.io/project/overview?id=martinalupini_BugginessPredictor_ISW2">
-    <img src="https://sonarcloud.io/api/project_badges/measure?project=martinalupini_BugginessPredictor_ISW2&metric=code_smells" alt="Code Smells">
-  </a>
-</div>
-
-<div style="text-align: right;">
-  <img src="reportFiles/logo.png" width="80" height="80" alt="Project Logo">
-</div>
+<table width="100%" border="0">
+  <tr>
+    <td align="left">
+      <a href="https://sonarcloud.io/project/overview?id=martinalupini_BugginessPredictor_ISW2">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=martinalupini_BugginessPredictor_ISW2&metric=code_smells" alt="Code Smells">
+      </a>
+    </td>
+    <td align="right">
+      <img src="reportFiles/logo.png" width="80" height="80" alt="Project Logo">
+    </td>
+  </tr>
+</table>
 
 --- 
 
