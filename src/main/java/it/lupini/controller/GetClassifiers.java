@@ -13,7 +13,6 @@ import weka.core.AttributeStats;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.filters.supervised.attribute.AttributeSelection;
-import weka.filters.supervised.instance.Resample;
 import weka.filters.supervised.instance.SMOTE;
 
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class GetClassifiers {
         int minorityClassSize = attributeStats.nominalCounts[0];
 
         double percentageSmote  =  (100.0*(majorityClassSize-minorityClassSize))/minorityClassSize;
-        double percentageOversampling = ((100.0*majorityClassSize)/(majorityClassSize + minorityClassSize))*2;
 
         noFilters(classifiers);
         featureSelection(classifiers);
