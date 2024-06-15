@@ -1,13 +1,12 @@
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <div>
-    <a href="https://sonarcloud.io/project/overview?id=martinalupini_BugginessPredictor_ISW2">
-      <img src="https://sonarcloud.io/api/project_badges/measure?project=martinalupini_BugginessPredictor_ISW2&metric=code_smells" alt="Code Smells">
-    </a>
-  </div>
-  <div>
-    <img src="reportFiles/logo.png" width="100" height="100" >
-  </div>
+<div style="text-align: left;">
+  <a href="https://sonarcloud.io/project/overview?id=martinalupini_BugginessPredictor_ISW2">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=martinalupini_BugginessPredictor_ISW2&metric=code_smells" alt="Code Smells">
+  </a>
+</div>
+
+<div style="text-align: right;">
+  <img src="reportFiles/logo.png" width="80" height="80" alt="Project Logo">
 </div>
 
 --- 
@@ -30,7 +29,7 @@ Missed information about the injected version and affected version are completed
 - **Classifier support**: the classifiers analyzed are Random Forest, IBk and Naive Bayes. They are also combined with machine learning techniques such as feature selection, balancing and cost sensitive learning.  
 
 
-- **Performance and effort-aware metrics**: Comprehensive evaluation metrics such as accuracy, precision, recall, F1-score, AUC and NPof30.
+- **Performance and effort-aware metrics**: Comprehensive evaluation metrics such as cost, precision, recall, F1-score, AUC and NPof30.
 
 ## Results
 
