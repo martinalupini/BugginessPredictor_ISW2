@@ -79,7 +79,5 @@ public class ExtractData {
         List<ClassifierEvaluation> evaluations = classify.evaluateClassifiers();
         WriteCSV.writeFinalWekaResults(project, evaluations);
 
-
-
     }
 }
