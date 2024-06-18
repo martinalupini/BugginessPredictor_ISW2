@@ -19,8 +19,6 @@ public class Proportion {
 
     private float totalProportion;
 
-    private float pColdStart;
-
 
     private enum Projects {
         AVRO,
@@ -32,7 +30,6 @@ public class Proportion {
     public Proportion(){
         this.proportionList = new ArrayList<>();
         this.totalProportion = 0;
-        this.pColdStart = 0;
     }
 
     public void fixTicketWithProportion(Ticket ticket, List<Release> releaseList) throws IOException, URISyntaxException {
@@ -61,8 +58,6 @@ public class Proportion {
     }
 
     private float coldStart(LocalDate resolutionDate) throws IOException, URISyntaxException {
-
-        //if(pColdStart != 0)  return pColdStart;
 
         List<Float> proportionListTemp = new ArrayList<>();
 
