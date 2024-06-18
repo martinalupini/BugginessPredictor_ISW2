@@ -7,6 +7,7 @@ import it.lupini.utils.TicketUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class Proportion {
         float proportion;
 
         if(proportionList.size() < 5){
-            proportion = coldStart();
+            proportion = coldStart(ticket.getResolutionDate());
         }else{
             proportion = increment();
         }
@@ -59,7 +60,7 @@ public class Proportion {
         return this.totalProportion / this.proportionList.size();
     }
 
-    private float coldStart() throws IOException, URISyntaxException {
+    private float coldStart(LocalDate resolutionDate) throws IOException, URISyntaxException {
 
         if(pColdStart != 0)  return pColdStart;
 
@@ -74,7 +75,7 @@ public class Proportion {
 
 
             //need to obtain all tickets that have AV set
-            List<Ticket> consistentTickets = TicketUtils.returnConsistentTickets(allTickets);
+            List<Ticket> consistentTickets = TicketUtils.returnConsistentTickets(allTickets, resolutionDate);
             if(consistentTickets.size() >= 5){
 
                 Proportion proportion = new Proportion();
