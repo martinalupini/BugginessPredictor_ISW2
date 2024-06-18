@@ -1,0 +1,8 @@
+ASSUMPTIONS
+
+- Removed releases without commits
+- Removed tickets without commits (they had already been used for calculating proportion)
+- Assumed that the dates on the tickets are accurate (since they are used to calculate OV and FV)
+- Assumed that the tickets labelled as defect are really defect
+- Increment can underestimate the performance of classifiers
+
