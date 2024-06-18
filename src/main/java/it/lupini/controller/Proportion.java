@@ -62,7 +62,7 @@ public class Proportion {
 
     private float coldStart(LocalDate resolutionDate) throws IOException, URISyntaxException {
 
-        if(pColdStart != 0)  return pColdStart;
+        //if(pColdStart != 0)  return pColdStart;
 
         List<Float> proportionListTemp = new ArrayList<>();
 
